@@ -18,7 +18,7 @@ def login_required(f):
 
     return decorated_function
 
-# Function to check if form data in a valid integer
+# Function to check if form data is a valid integer
 def isInt(input):
     try:
         int(input)
@@ -37,7 +37,4 @@ def validatePassword(input):
             symbolCtr = symbolCtr + 1
         if i.isdigit():
             numCtr = numCtr + 1
-    if symbolCtr == 0 and numCtr == 0 or len(input) < 8:
-        return False
-    else:
-        return True
+    return not ((symbolCtr == 0 and numCtr == 0) or len(input) < 8)
