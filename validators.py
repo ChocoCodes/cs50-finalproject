@@ -17,3 +17,27 @@ def login_required(f):
         return f(*args, **kwargs)
 
     return decorated_function
+
+# Function to check if form data in a valid integer
+def isInt(input):
+    try:
+        int(input)
+        return True
+    except ValueError:
+        return False
+
+# Function to check if the password follows the requirements
+def validatePassword(input):
+    specialCharacters = ['+', '-', '#', '!', '?', '_', '@', '%', '&', '*']
+    symbolCtr = 0
+    numCtr = 0
+    frozenset(specialCharacters)
+    for i in input:
+        if i in specialCharacters:
+            symbolCtr = symbolCtr + 1
+        if i.isdigit():
+            numCtr = numCtr + 1
+    if symbolCtr == 0 and numCtr == 0 or len(input) < 8:
+        return False
+    else:
+        return True
