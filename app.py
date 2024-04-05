@@ -35,15 +35,21 @@ def after_request(response):
 @vd.login_required
 def dashboard():
     """ Handle Dashboard Information """
+    return vd.apology("TODO")
 
 @app.route("/register")
 def register():
     """ Add more user/s """
+    return vd.apology("TODO")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """ Log user/s in to the app """
+    return vd.apology("TODO")
 
 @app.route("/logout")
 def logout():
     """ Log user/s out from the app """
+    # Forget any user_id and redirect to login form
+    session.clear()
+    return redirect("/")
