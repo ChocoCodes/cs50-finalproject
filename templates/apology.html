@@ -7,5 +7,6 @@
 {% endblock %}
 
 {% block main %}
-    <img alt="{{ top }}" class="border img-fluid" src="{{ url_for('static', filename='images/apology.jpg')}}" title="{{ top }}">
+   {# <img alt="{{ top }}" class="border img-fluid" src="{{ url_for('static', filename='images/apology.jpg')}}" title="{{ top }}"> #} 
+    <img alt="{{ top }}" class="border img-fluid" src="https://api.memegen.link/images/custom/{{ top | urlencode }}/{{ bottom | urlencode }}.jpg?background=https://i.imgur.com/obHoTyn.jpg" title="{{ top }}">
 {% endblock %}

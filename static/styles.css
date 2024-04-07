@@ -1,10 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Serif:ital,opsz,wght@0,8..144,100..900;1,8..144,100..900&display=swap');
+
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-body {
+.logged-out {
     background: url('images/bg-login-2.jpg') no-repeat fixed center;
     background-size: cover;
+}
+ 
+.logged-in {
+    background: white;
+}
+
+a.mango {
+    color: #F7BF8E;
+}
+
+a.fnt-nav {
+    font-size: 40px;
+    font-family: 'Roboto Serif', sans-serif;
+    font-weight: 600;
+}
+
+a.fnt {
+    font-size: 40px;
+    font-family: 'Roboto Serif', sans-serif;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+/*Footer Format */
+.footer {
+    background-color: #262277;
+    padding: 20px;
+    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+.copyright {
+    text-align: left;
+    margin-left: 75px;
+}
+
+.copyright p {
+    font-size: 14px;
+    font-family: "Lato", sans-serif;
+    color: #D4D4D4;
+}
+
+.copyright h3,
+.contact h3 {
+    font-size: 14px;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 600;
+    color: #F7BF8E;
+}
+
+.contact {
+    margin-right: 75px;
+}
+
+#icbot {
+    width: 24px;
+    height: 24px;
+    font-size: 15px;
+    text-align: center;
+    padding: 5px;
+    border-radius: 50%;
+}
+
+.contact a {
+    justify-content: space-between;
+    margin: 0 5px;
 }

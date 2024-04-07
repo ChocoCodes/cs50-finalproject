@@ -12,15 +12,15 @@
     <link rel="stylesheet" href="static/styles.css">
     <title>FinnaOrganize: {% block title %} {% endblock %}</title>
 </head>
-<body>
+<body class="{{ 'logged-in' if session.get('user_id') else 'logged-out' }}">
     <nav class="bg-transparent navbar navbar-expand-md navbar-dark">
         <div class="container-fluid">
-            <a id="navbar-brand" class="" href="/">FinnaOrganizer</a>
+            <a id="navbar-brand" class="fnt mango" href="/">FinnaOrganize</a>
             <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbar" data-bs-toggle="collapse" type="button">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbar">
-                {% if session["user_id"] %}
+                {% if session.get('user_id') %}
                     <ul class="navbar-nav me-auto mt-2">
                         <li class="nav-item"><a class="nav-link" href="/profile">Profile</a></li>
                         <li class="nav-item"><a class="nav-link" href="/">Dashboard</a></li>
@@ -30,12 +30,31 @@
                     </ul>
                 {% else %}
                     <ul class="navbar-nav ms-auto mt-2">
-                        <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/login">Log In</a></li>
+                        <li class="nav-item"><a class="nav-link fnt-nav mango" href="/register">Register</a></li>
+                        <li class="nav-item"><a class="nav-link fnt-nav mango" href="/login">Log In</a></li>
                     </ul>
                 {% endif %}
             </div>
         </div>
     </nav>
+    
+    <main class="container py-5 text-center">
+        {% block main %}{% endblock %}
+    </main>
+    
+    {% if not session.get('user_id') %}
+    <footer class="footer">
+        <div class="copyright">
+            <h3>Copyright &copy; 2024 John Octavio</h3>
+            <p>Harvard CS50x 2023-2024</p>
+        </div>
+        <div class="contact">
+            <h3>GET IN TOUCH</h3>
+            <a id="icbot" href="https://www.facebook.com/choco1717/" class="fa fa-facebook"></a>
+            <a id="icbot" href="https://github.com/ChocoCodes" class="fa fa-github"></a>
+            <a id="icbot" href="#" class="fa fa-linkedin"></a>
+        </div>
+    </footer>
+    {% endif %}
 </body>
 </html>
