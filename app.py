@@ -37,15 +37,33 @@ def dashboard():
     """ Handle Dashboard Information """
     return vd.apology("TODO")
 
-@app.route("/register")
+@app.route("/register", methods=["GET", "POST"])
 def register():
     """ Add more user/s """
-    return vd.apology("TODO")
+    return render_template("register.html")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """ Log user/s in to the app """
-    return vd.apology("TODO")
+    session.clear()
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        if not username or not password:
+            return vd.apology("Input field/s are empty.", 403)
+        
+        rowUserData = db.execute(
+            "SELECT * FROM users WHERE username = ?", username
+        )
+        
+        if len(rowUserData) != 1: # add password validator
+            return vd.apology("Invalid Username/Password.", 403)
+        
+        session["user_id"] = rowUserData[0]["id"]
+        return redirect("/")
+    else:
+        return render_template("login.html")
 
 @app.route("/logout")
 def logout():
