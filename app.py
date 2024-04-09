@@ -4,7 +4,6 @@ import validators as vd
 from cs50 import SQL
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
-from werkzeug.security import check_password_hash, generate_password_hash
 from dotenv import load_dotenv
 
 # Configure app
@@ -40,7 +39,32 @@ def dashboard():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     """ Add more user/s """
-    return render_template("register.html")
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        confirmedPassword = request.form.get("confirm")
+
+        userDB = db.execute("SELECT * FROM users WHERE username = ?", username)
+        if len(userDB) != 0:
+            return vd.apology("Username already exists.")
+        if not username or not password or not confirmedPassword:
+            return vd.apology("Input Field/s are empty.")
+        if not password == confirmedPassword:
+            return vd.apology("Passwords does not match with each other!")
+        if not vd.validatePasswordStructure(password):
+            return vd.apology("Password should contain at least: 1 symbol, 1 number and length of 8 or more.")
+        
+        passwordSalt = vd.generatePasswordSalt()
+        convertedSalt = passwordSalt.hex() # Convert the salt from a byte object to a string for database storage
+        hashedPassword = vd.generateHash(password, convertedSalt)
+
+        db.execute("INSERT INTO users(username, hash, salt) VALUES(?, ?, ?)", username, hashedPassword, convertedSalt)
+
+        id = db.execute("SELECT * FROM users WHERE username = ?", username)
+        session["user_id"] = id[0]["id"]
+        return redirect("/")
+    else:
+        return render_template("register.html")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -51,14 +75,14 @@ def login():
         password = request.form.get("password")
 
         if not username or not password:
-            return vd.apology("Input field/s are empty.", 403)
+            return vd.apology("Input field/s are empty.")
         
         rowUserData = db.execute(
             "SELECT * FROM users WHERE username = ?", username
         )
         
-        if len(rowUserData) != 1: # add password validator
-            return vd.apology("Invalid Username/Password.", 403)
+        if len(rowUserData) != 1 or not vd.validatePassword(password, rowUserData[0]["salt"], rowUserData[0]["hash"]):
+            return vd.apology("Invalid Username/Password!")
         
         session["user_id"] = rowUserData[0]["id"]
         return redirect("/")

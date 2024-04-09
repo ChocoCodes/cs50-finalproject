@@ -1,3 +1,5 @@
+import os
+import hashlib as hash
 from flask import redirect, session, render_template
 from functools import wraps
 
@@ -31,16 +33,18 @@ def apology(message, code=400):
         return s
     return render_template("apology.html", top=code, bottom=escape(message)), code
 
-# Function to check if form data is a valid integer
+
 def isInt(input):
+    """ Check if an amount or any required numeric data is a valid integer """
     try:
         int(input)
         return True
     except ValueError:
         return False
 
-# Function to check if the password follows the requirements
-def validatePassword(input):
+
+def validatePasswordStructure(input):
+    """ Check if the password follows the requirements """
     specialCharacters = ['+', '-', '#', '!', '?', '_', '@', '%', '&', '*']
     symbolCtr = 0
     numCtr = 0
@@ -51,3 +55,18 @@ def validatePassword(input):
         if i.isdigit():
             numCtr = numCtr + 1
     return not ((symbolCtr == 0 and numCtr == 0) or len(input) < 8)
+
+def generatePasswordSalt():
+    """ Generate a random salt """
+    return os.urandom(16)
+
+def generateHash(password, salt):
+    """ Convert password and salt from string to bytes, and generate a hash """
+    saltedPass = (salt + password).encode()
+    hashedPass = hash.sha256(saltedPass).hexdigest()
+    return hashedPass
+
+def validatePassword(inputPass, dbSalt, dbPass):
+    """ Check if password input matches the hashed password in the database """
+    hashedInputPass = generateHash(inputPass, dbSalt)
+    return hashedInputPass == dbPass
