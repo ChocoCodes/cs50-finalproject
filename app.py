@@ -8,6 +8,9 @@ from dotenv import load_dotenv
 
 # Configure app
 app = Flask(__name__)
+
+# Custom Filter for Numeric Values
+app.jinja_env.filters["php"] = vd.formatToPHP
 # Load secret key from .env and configure secret key to use Sessions
 load_dotenv()
 app.secret_key = os.getenv('SECRET_KEY')
@@ -29,12 +32,11 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
-
 @app.route("/")
 @vd.login_required
 def dashboard():
     """ Handle Dashboard Information """
-    return vd.apology("TODO")
+    return render_template("index.html")
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -95,3 +97,7 @@ def logout():
     # Forget any user_id and redirect to login form
     session.clear()
     return redirect("/")
+
+
+if __name__ == "__main__":
+    app.run()

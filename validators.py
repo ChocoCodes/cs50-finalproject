@@ -3,8 +3,10 @@ import hashlib as hash
 from flask import redirect, session, render_template
 from functools import wraps
 
-
-# Adapted from CS50x Finance: https://cs50.harvard.edu/x/2024/psets/9/finance/ 
+"""
+Functions listed below were adapted from CS50x Finance: https://cs50.harvard.edu/x/2024/psets/9/finance/.
+login_required(), apology(), formatToPHP() from [value()].
+"""
 def login_required(f):
     """ Decorate routes to require login. https://flask.palletsprojects.com/en/latest/patterns/viewdecorators/ """
     @wraps(f)
@@ -14,7 +16,6 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-# Adapted from CS50x Finance: https://cs50.harvard.edu/x/2024/psets/9/finance/ 
 def apology(message, code=400):
     """Render message as an apology to user."""
     def escape(s):
@@ -70,3 +71,7 @@ def validatePassword(inputPass, dbSalt, dbPass):
     """ Check if password input matches the hashed password in the database """
     hashedInputPass = generateHash(inputPass, dbSalt)
     return hashedInputPass == dbPass
+
+def formatToPHP(amount):
+    """Format numeric data such as amounts in Philippine Peso [₱] """
+    return f"₱{amount:,.2f}"
