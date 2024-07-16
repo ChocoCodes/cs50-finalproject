@@ -17,7 +17,8 @@
 }
 
 a.mango {
-    color: #F7BF8E;
+    /*F7BF8E*/
+    color: #000000;
 }
 
 a.fnt-nav {
@@ -33,7 +34,7 @@ a.fnt {
     text-decoration: none;
 }
 
-/*Footer Format */
+/* Footer Format: AFTER BACK END
 .footer {
     background-color: #262277;
     padding: 20px;
@@ -78,4 +79,4 @@ a.fnt {
 .contact a {
     justify-content: space-between;
     margin: 0 5px;
-}
+} */

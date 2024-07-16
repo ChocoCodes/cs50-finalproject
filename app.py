@@ -6,6 +6,13 @@ from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from dotenv import load_dotenv
 
+"""
+TEST LOGIN CREDS:
+Username: testuser
+Password: helloworld0!
+"""
+
+
 # Configure app
 app = Flask(__name__)
 
@@ -14,7 +21,7 @@ app.jinja_env.filters["php"] = vd.formatToPHP
 # Load secret key from .env and configure secret key to use Sessions
 load_dotenv()
 app.secret_key = os.getenv('SECRET_KEY')
-# Configure session to use filesystem (instead of signed cookies) - we will be handling massive amounts of data
+# Configure session to use filesystem (instead of signed cookies) - we will be possibly handling massive amounts of data
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
@@ -22,6 +29,7 @@ Session(app)
 # Configure CS50 library to use database
 db = SQL("sqlite:///finnaorganize.db")
 
+transactionTypes = ['Allowance', 'Spendings', 'Savings']
 # Adapted from CS50x Finance: https://cs50.harvard.edu/x/2024/psets/9/finance
 # Ensure that the data is always updated when the app is running
 @app.after_request
@@ -36,7 +44,14 @@ def after_request(response):
 @vd.login_required
 def dashboard():
     """ Handle Dashboard Information """
-    return render_template("index.html")
+    # Check if the data is empty
+    userFinancesData = db.execute("SELECT * FROM finances WHERE user_id = ?", session["user_id"])
+    savings = userFinancesData[0]['savings']
+    spendings = userFinancesData[0]['spendings']
+    allowance = userFinancesData[0]['allowance']
+    # transactionHistory = db.execute("SELECT * FROM transactions WHERE user_id = ?", session["user_id"])
+
+    return render_template("index.html", userSavings=savings, userSpendings=spendings, userAllowance=allowance)
 
 @app.route("/register", methods=["GET", "POST"])
 def register():

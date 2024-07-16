@@ -4,9 +4,11 @@ from flask import redirect, session, render_template
 from functools import wraps
 
 """
+#### ACKNOWLEDGEMENT ####
 Functions listed below were adapted from CS50x Finance: https://cs50.harvard.edu/x/2024/psets/9/finance/.
-login_required(), apology(), formatToPHP() from [value()].
+login_required(), apology(), formatToPHP() from [usd()].
 """
+
 def login_required(f):
     """ Decorate routes to require login. https://flask.palletsprojects.com/en/latest/patterns/viewdecorators/ """
     @wraps(f)
@@ -34,7 +36,6 @@ def apology(message, code=400):
         return s
     return render_template("apology.html", top=code, bottom=escape(message)), code
 
-
 def isInt(input):
     """ Check if an amount or any required numeric data is a valid integer """
     try:
@@ -42,7 +43,6 @@ def isInt(input):
         return True
     except ValueError:
         return False
-
 
 def validatePasswordStructure(input):
     """ Check if the password follows the requirements """
