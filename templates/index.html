@@ -5,20 +5,28 @@
 {% endblock %}
 
 {% block main %}
+    <!-- [Finance CARDS] -->
     <div>
-        <h2>Savings: {{ userSavings }}</h2>
+        <p class="h2 fw-bold">Savings: </p>
+        <div class="h2 fw-bold">{{ userSavings }}</div>
+        <a onclick="opnDashboardForm(event)" class="fa-solid fa-plus remove-link"></a>
     </div>
     <div>
-        <h2>Spendings: {{ userSpendings }}</h2>
+        <p class="h2 fw-bold">Spendings: </p>
+        <div class="h2 fw-bold">{{ userSpendings }}</div>
+        <a onclick="opnDashboardForm(event)" class="fa-solid fa-plus remove-link"></a>
     </div>
     <div>
-        <h2>Allowance: {{ userAllowance }}</h2>
+        <p class="h2 fw-bold">Allowance: </p>
+        <div class="h2 fw-bold">{{ userAllowance }}</div>
+        <a onclick="opnDashboardForm(event)" class="fa-solid fa-plus remove-link"></a>
     </div>
+    <!-- [Transaction TABLE] -->
     <table class="table table-striped">
         <thead>
             <th class="text-start">Field 1</th>
             <th class="text-end">Field 2</th>
-            <th class="text-end">FIeld 3</th>
+            <th class="text-end">Field 3</th>
             <th class="text-end">Field 4</th>
         </thead>
         <tbody>
@@ -29,4 +37,16 @@
             </tr>
         </tbody>
     </table>
+    <!--[Input FORM]-->
+    <form id="data-entry">
+        <div class="form-group">
+            <label for="amtField">Amount</label>
+            <input type="number" class="form-control" id="amtField" placeholder="Enter Amount" aria-describedby="inputNotif" required>
+            <small id="inputNotif" class="form-text text-muted">
+                Please ensure that the input is valid. No need to include commas and/or currency sign/s.
+            </small>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <button onclick="clsDashboardForm(event)" class="btn btn-danger">Cancel</button>
+    </form>
 {% endblock %}

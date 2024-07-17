@@ -12,6 +12,11 @@
     background-size: cover;
 }
 
+a.remove-link {
+    text-decoration: none;
+    color: inherit;
+}
+
 .logged-in {
     background: white;
 }
@@ -33,6 +38,19 @@ a.fnt {
     font-weight: 700;
     text-decoration: none;
 }
+
+/*[FORM]*/
+#data-entry {
+    display: none;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+
 
 /* Footer Format: AFTER BACK END
 .footer {

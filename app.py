@@ -29,7 +29,8 @@ Session(app)
 # Configure CS50 library to use database
 db = SQL("sqlite:///finnaorganize.db")
 
-transactionTypes = ['Allowance', 'Spendings', 'Savings']
+# transactionTypes = ['Allowance', 'Spendings', 'Savings']
+
 # Adapted from CS50x Finance: https://cs50.harvard.edu/x/2024/psets/9/finance
 # Ensure that the data is always updated when the app is running
 @app.after_request
