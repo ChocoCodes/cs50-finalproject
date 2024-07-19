@@ -8,45 +8,48 @@
     <!-- [Finance CARDS] -->
     <div>
         <p class="h2 fw-bold">Savings: </p>
-        <div class="h2 fw-bold">{{ userSavings }}</div>
-        <a onclick="opnDashboardForm(event)" class="fa-solid fa-plus remove-link"></a>
+        <div class="h2 fw-bold">{{ userSavings | php }}</div>
+        <a id="1" onclick="opnDashboardForm(event)" class="fa-solid fa-plus remove-link"></a>
     </div>
     <div>
         <p class="h2 fw-bold">Spendings: </p>
-        <div class="h2 fw-bold">{{ userSpendings }}</div>
-        <a onclick="opnDashboardForm(event)" class="fa-solid fa-plus remove-link"></a>
+        <div class="h2 fw-bold">{{ userSpendings | php }}</div>
+        <a id="2" onclick="opnDashboardForm(event)" class="fa-solid fa-plus remove-link"></a>
     </div>
     <div>
         <p class="h2 fw-bold">Allowance: </p>
-        <div class="h2 fw-bold">{{ userAllowance }}</div>
-        <a onclick="opnDashboardForm(event)" class="fa-solid fa-plus remove-link"></a>
+        <div class="h2 fw-bold">{{ userAllowance | php }}</div>
+        <a id="3" onclick="opnDashboardForm(event)" class="fa-solid fa-plus remove-link"></a>
     </div>
     <!-- [Transaction TABLE] -->
     <table class="table table-striped">
         <thead>
-            <th class="text-start">Field 1</th>
-            <th class="text-end">Field 2</th>
-            <th class="text-end">Field 3</th>
-            <th class="text-end">Field 4</th>
+            <th class="text-start">Transaction ID</th>
+            <th class="text-end">Date</th>
+            <th class="text-end">Transaction Type</th>
+            <th class="text-end">Amount</th>
         </thead>
         <tbody>
+            {% for transactions in userTransactions %}
             <tr>
-                <td>
-                    
-                </td>
+                <td class="text-start">{{ transactions['id'] }}</td>
+                <td class="text-end">{{ transactions['transaction_date'] }}</td>
+                <td class="text-end">{{ transactionType }}</td>
+                <td class="text-end">{{ transactions['amt'] }}</td>
             </tr>
+            {% endfor %}
         </tbody>
     </table>
     <!--[Input FORM]-->
-    <form id="data-entry">
+    <form id="data-entry" action="/submit" method="post">
         <div class="form-group">
-            <label for="amtField">Amount</label>
-            <input type="number" class="form-control" id="amtField" placeholder="Enter Amount" aria-describedby="inputNotif" required>
+            <label class="h3 fw-s"for="amtField">Amount</label>
+            <input autocomplete="off" type="number" name="amount" class="form-control" id="amtField" placeholder="Enter Amount" aria-describedby="inputNotif" required>
             <small id="inputNotif" class="form-text text-muted">
                 Please ensure that the input is valid. No need to include commas and/or currency sign/s.
             </small>
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" id="sub-btn" class="btn btn-primary">Submit</button>
         <button onclick="clsDashboardForm(event)" class="btn btn-danger">Cancel</button>
     </form>
 {% endblock %}

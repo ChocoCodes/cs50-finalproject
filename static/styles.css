@@ -39,9 +39,14 @@ a.fnt {
     text-decoration: none;
 }
 
-/*[FORM]*/
+/* [FORM] */
 #data-entry {
     display: none;
+    font-family: 'Roboto Serif', sans-serif;
+    border: 3px #f1f1f1 solid;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: left;
 }
 
 input::-webkit-outer-spin-button,

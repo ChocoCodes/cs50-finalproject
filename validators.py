@@ -44,6 +44,17 @@ def isInt(input):
     except ValueError:
         return False
 
+def toDict(json_data):
+    """ Convert request from a list of dictionaries to a single dictionary """
+    return {d['btnId']:d['amount'] for d in json_data}
+
+def toCategory(nTransacType, lookupDict):
+    """ Convert numeric transaction type to its equivalent transaction category """
+    equivCat = dict(zip(lookupDict['btnId'], lookupDict['type']))
+    return equivCat.get(nTransacType)
+
+
+
 def validatePasswordStructure(input):
     """ Check if the password follows the requirements """
     specialCharacters = ['+', '-', '#', '!', '?', '_', '@', '%', '&', '*']
