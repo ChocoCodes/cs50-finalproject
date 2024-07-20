@@ -2,7 +2,7 @@ import os
 import validators as vd
 
 from cs50 import SQL
-from flask import Flask, flash, redirect, render_template, request, session, jsonify
+from flask import Flask, flash, redirect, render_template, url_for, request, session, jsonify
 from flask_session import Session
 from dotenv import load_dotenv
 
@@ -33,14 +33,14 @@ db = SQL("sqlite:///finnaorganize.db")
 
 entryCategory = {
     'buttonID': [1, 2, 3],
-    'type': ['Allowance', 'Spendings', 'Savings']
+    'type': ['Savings', 'Spendings','Allowance']
 }
 
 # Adapted from CS50x Finance: https://cs50.harvard.edu/x/2024/psets/9/finance
 # Ensure that the data is always updated when the app is running
 @app.after_request
 def after_request(response):
-    """Ensure responses aren't cached"""
+    """ Ensure responses aren't cached """
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     response.headers["Expires"] = 0
     response.headers["Pragma"] = "no-cache"
@@ -49,10 +49,11 @@ def after_request(response):
 @app.route("/", methods=['GET'])
 @vd.login_required
 def dashboard():
-    """Handle user finances and transactions when logged in"""
+    """ Handle user finances and transactions when logged in """
 
     userFinancesData = db.execute(
-        "SELECT * FROM finances WHERE user_id = ?", session["user_id"]
+        "SELECT * FROM finances WHERE user_id = ?", 
+        session["user_id"]
     )
 
     savings = userFinancesData[0]['savings']
@@ -60,32 +61,41 @@ def dashboard():
     allowance = userFinancesData[0]['allowance']
 
     transactionHistory = db.execute(
-        "SELECT * FROM transactions WHERE user_id = ?", session["user_id"]
+        "SELECT * FROM transactions WHERE user_id = ?", 
+        session["user_id"]
     )
+    
     if transactionHistory:
-        transacTypeNum = transactionHistory[0]['transaction_type']
-        category = vd.toCategory(transacTypeNum, entryCategory)
-    else:
-        category = " "
-    return render_template("index.html", userSavings=savings, userSpendings=spendings, userAllowance=allowance, userTransactions=transactionHistory, transactionType=category)
+        for t in transactionHistory:
+            transacTypeNum = t['transaction_type']
+            t['category'] = vd.toCategory(transacTypeNum, entryCategory)
+    
+    return render_template("index.html", userSavings=savings, userSpendings=spendings, userAllowance=allowance, userTransactions=transactionHistory)
 
 @app.route("/submit", methods=['POST'])
 def getFormInput():
-    """Process dashboard form submission/s"""
-    # TODO: Extract values, process data, update dashboard
+    """ Process dashboard form submission/s """
     request_userEntry = request.get_json()
     rq_converted = vd.toDict(request_userEntry)
+    rq_datetime = vd.getCurrTime()
     for id, amt in rq_converted.items():
         rq_btnId = id
         rq_amount = amt
-        print(f"ID: {rq_btnId}, Amount: {rq_amount}")
-    # Add data to Transactions DB
+    db.execute(
+        "INSERT INTO transactions(user_id, transaction_type, transaction_date, amt) VALUES(?, ?, ?, ?)", 
+        session['user_id'], rq_btnId, rq_datetime, rq_amount
+    )
+    # TODO: 
+    # 1.) Update user finances accdng to transactions DB 
+    # 2.) Fix reload dashboard issues and flashes not working
     
-    return redirect("/")
+    flash("Transaction Recorded!")
+    print(f"ID: {rq_btnId}, Amount: {rq_amount}, Time: {rq_datetime}")
+    return redirect(url_for('dashboard'))
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    """Add more user/s"""
+    """ Add more user/s """
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
@@ -105,7 +115,8 @@ def register():
             return vd.apology("Password should contain at least: 1 symbol, 1 number and length of 8 or more.")
         
         passwordSalt = vd.generatePasswordSalt()
-        convertedSalt = passwordSalt.hex() # Convert the salt from a byte object to a string for database storage
+        # Convert the salt from a byte object to a string to store in DB
+        convertedSalt = passwordSalt.hex() 
         hashedPassword = vd.generateHash(password, convertedSalt)
 
         db.execute(
@@ -123,7 +134,7 @@ def register():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    """Log user/s in to the app"""
+    """ Log user/s in to the app """
     session.clear()
     if request.method == "POST":
         username = request.form.get("username")
@@ -146,11 +157,11 @@ def login():
 
 @app.route("/logout")
 def logout():
-    """Log user/s out from the app"""
+    """ Log user/s out from the app """
     # Forget any user_id and redirect to login form
     session.clear()
     return redirect("/")
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True,use_reloader=True)

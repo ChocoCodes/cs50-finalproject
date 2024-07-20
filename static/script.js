@@ -3,14 +3,12 @@ let btnPressedId;
 function opnDashboardForm(e) {
     e.preventDefault();
     btnPressedId = e.target.id;
-    console.log(btnPressedId); // DB
     document.getElementById('data-entry').style.display = "block";
 }
 
 // Close the popup form
 function clsDashboardForm(e) {
     e.preventDefault();
-    console.log('X'); // DB
     document.getElementById('data-entry').style.display = "none";
 }
 
@@ -20,16 +18,18 @@ window.addEventListener('DOMContentLoaded', function() {
     const submit = document.getElementById("sub-btn");
     submit.addEventListener('click', function(e){
         e.preventDefault();
+        
         let amtIn = parseFloat(document.getElementById("amtField").value);
         if(amtIn < 0) {
             alert("Amount cannot be of negative value.");
             form.reset();
             return;
         }
+
         let clientData = [
             {'btnId': btnPressedId, 'amount': amtIn}
         ];
-        console.log(clientData); // DB
+
         $.ajax({
             url: '/submit',
             type: 'POST',

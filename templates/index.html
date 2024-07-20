@@ -34,14 +34,14 @@
             <tr>
                 <td class="text-start">{{ transactions['id'] }}</td>
                 <td class="text-end">{{ transactions['transaction_date'] }}</td>
-                <td class="text-end">{{ transactionType }}</td>
-                <td class="text-end">{{ transactions['amt'] }}</td>
+                <td class="text-end">{{ transactions['category'] }}</td>
+                <td class="text-end">{{ transactions['amt'] | php }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
     <!--[Input FORM]-->
-    <form id="data-entry" action="/submit" method="post">
+    <form id="data-entry" action="{{ url_for('getFormInput') }}" method="post">
         <div class="form-group">
             <label class="h3 fw-s"for="amtField">Amount</label>
             <input autocomplete="off" type="number" name="amount" class="form-control" id="amtField" placeholder="Enter Amount" aria-describedby="inputNotif" required>

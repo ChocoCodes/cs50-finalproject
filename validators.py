@@ -2,6 +2,7 @@ import os
 import hashlib as hash
 from flask import redirect, session, render_template
 from functools import wraps
+from datetime import datetime
 
 """
 #### ACKNOWLEDGEMENT ####
@@ -50,10 +51,12 @@ def toDict(json_data):
 
 def toCategory(nTransacType, lookupDict):
     """ Convert numeric transaction type to its equivalent transaction category """
-    equivCat = dict(zip(lookupDict['btnId'], lookupDict['type']))
+    equivCat = dict(zip(lookupDict['buttonID'], lookupDict['type']))
     return equivCat.get(nTransacType)
 
-
+def getCurrTime():
+    """ Get current time """
+    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 def validatePasswordStructure(input):
     """ Check if the password follows the requirements """
