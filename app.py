@@ -6,13 +6,6 @@ from flask import Flask, flash, redirect, render_template, url_for, request, ses
 from flask_session import Session
 from dotenv import load_dotenv
 
-"""
-DEBUG LOGIN CREDS:
-Username: testuser
-Password: helloworld0!
-"""
-
-
 # Configure app
 app = Flask(__name__)
 
@@ -51,10 +44,7 @@ def after_request(response):
 def dashboard():
     """ Handle user finances and transactions when logged in """
 
-    userFinancesData = db.execute(
-        "SELECT * FROM finances WHERE user_id = ?", 
-        session["user_id"]
-    )
+    userFinancesData = getUserFinances()
 
     savings = userFinancesData[0]['savings']
     spendings = userFinancesData[0]['spendings']
@@ -73,25 +63,90 @@ def dashboard():
     return render_template("index.html", userSavings=savings, userSpendings=spendings, userAllowance=allowance, userTransactions=transactionHistory)
 
 @app.route("/submit", methods=['POST'])
+@vd.login_required
 def getFormInput():
     """ Process dashboard form submission/s """
     request_userEntry = request.get_json()
     rq_converted = vd.toDict(request_userEntry)
     rq_datetime = vd.getCurrTime()
+    rq_btnId, rq_amount = 0, 0.0
     for id, amt in rq_converted.items():
-        rq_btnId = id
-        rq_amount = amt
+        rq_btnId = int(id)
+        rq_amount = float(amt)
+    print(f"Button ID: {rq_btnId}, Amount: {rq_amount}, Time: {rq_datetime}")
+    # Queries to update [Finances] table
+    if rq_btnId == 1:
+        updateSavings(rq_amount)
+    if rq_btnId == 2:
+        updateSpendings(rq_amount)
+    if rq_btnId == 3:
+        updateAllowance(rq_amount)
+    # Query to log transactions in to [Transactions] table
     db.execute(
         "INSERT INTO transactions(user_id, transaction_type, transaction_date, amt) VALUES(?, ?, ?, ?)", 
         session['user_id'], rq_btnId, rq_datetime, rq_amount
     )
-    # TODO: 
-    # 1.) Update user finances accdng to transactions DB 
-    # 2.) Fix reload dashboard issues and flashes not working
-    
-    flash("Transaction Recorded!")
-    print(f"ID: {rq_btnId}, Amount: {rq_amount}, Time: {rq_datetime}")
-    return redirect(url_for('dashboard'))
+    # Queries to retrieve updated entries to [Transactions] and [Finances] table
+    latest_transaction = getLatestEntry()
+    updated_finances = getUserFinances()
+    print(f"ID: {latest_transaction[0]['id']}, Date: {latest_transaction[0]['transaction_date']}, Type: {latest_transaction[0]['transaction_type']}, Amount: {latest_transaction[0]['amt']}")
+    print(f"Savings: {updated_finances[0]['savings']}, Spendings: {updated_finances[0]['spendings']}, Allowance: {updated_finances[0]['allowance']}")
+    # Merge data into a single JSON-like format and send to JS
+    merged_data = vd.mergeEntries(latest_transaction, updated_finances)
+    print(f"transaction_id: {merged_data['transaction_id']}, amt: {merged_data['amt']}, type: {merged_data['type']}, date: {merged_data['date']}, u_savings: {merged_data['u_savings']}, u_spendings: {merged_data['u_spendings']}, u_allowance: {merged_data['u_allowance']}")
+    return jsonify(merged_data)
+
+
+def getUserFinances():
+    """ Get user's finances from Finance DB """
+    data = db.execute(
+        "SELECT * FROM finances WHERE user_id = ?", 
+        session["user_id"]
+    )
+    return data
+
+def getLatestEntry():
+    """ Get latest transaction log from Transaction DB """
+    data = db.execute(
+        "SELECT * FROM transactions WHERE user_id = ? ORDER BY ROWID DESC LIMIT 1",
+        session['user_id']
+    )
+    if data:
+        nType = data[0]['transaction_type']
+        data[0]['transaction_type'] = vd.toCategory(nType, entryCategory)
+    return data
+
+def updateSavings(amount):
+    """ Update savings from Finance DB """
+    db.execute(
+        "UPDATE finances SET savings = savings + ? WHERE user_id = ?",
+        amount, session['user_id']
+    )
+    db.execute(
+        "UPDATE finances SET allowance = allowance - ? WHERE user_id = ?",
+        amount, session['user_id']
+    )
+    return
+
+def updateSpendings(amount):
+    """ Update spendings from Finance DB """
+    db.execute(
+        "UPDATE finances SET spendings = spendings + ? WHERE user_id = ?",
+        amount, session['user_id']
+    )
+    db.execute(
+        "UPDATE finances SET allowance = allowance - ? WHERE user_id = ?",
+        amount, session['user_id']
+    )
+    return
+
+def updateAllowance(amount):
+    """ Update allowance from Finance DB """
+    db.execute(
+        "UPDATE finances SET allowance = allowance + ? WHERE user_id = ?",
+        amount, session['user_id']
+    )
+    return
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -129,8 +184,7 @@ def register():
 
         session["user_id"] = id[0]["id"]
         return redirect("/")
-    else:
-        return render_template("register.html")
+    return render_template("register.html")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -152,8 +206,7 @@ def login():
         
         session["user_id"] = rowUserData[0]["id"]
         return redirect("/")
-    else:
-        return render_template("login.html")
+    return render_template("login.html")
 
 @app.route("/logout")
 def logout():

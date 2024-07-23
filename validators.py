@@ -47,12 +47,25 @@ def isInt(input):
 
 def toDict(json_data):
     """ Convert request from a list of dictionaries to a single dictionary """
-    return {d['btnId']:d['amount'] for d in json_data}
+    return {entry['btnId']:entry['amount'] for entry in json_data}
 
 def toCategory(nTransacType, lookupDict):
     """ Convert numeric transaction type to its equivalent transaction category """
     equivCat = dict(zip(lookupDict['buttonID'], lookupDict['type']))
     return equivCat.get(nTransacType)
+
+def mergeEntries(transactions, finances):
+    """"""
+    merged_data = {
+        'transaction_id': transactions[0]['id'],
+        'amt': transactions[0]['amt'],
+        'type': transactions[0]['transaction_type'],
+        'date': transactions[0]['transaction_date'],
+        'u_savings': finances[0]['savings'],
+        'u_spendings': finances[0]['spendings'],
+        'u_allowance': finances[0]['allowance']
+    }
+    return merged_data
 
 def getCurrTime():
     """ Get current time """

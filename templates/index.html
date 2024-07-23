@@ -5,24 +5,24 @@
 {% endblock %}
 
 {% block main %}
-    <!-- [Finance CARDS] -->
+    <!-- [Finance] CARDS -->
     <div>
         <p class="h2 fw-bold">Savings: </p>
-        <div class="h2 fw-bold">{{ userSavings | php }}</div>
+        <div id="save" class="h2 fw-bold">{{ userSavings | php }}</div>
         <a id="1" onclick="opnDashboardForm(event)" class="fa-solid fa-plus remove-link"></a>
     </div>
     <div>
         <p class="h2 fw-bold">Spendings: </p>
-        <div class="h2 fw-bold">{{ userSpendings | php }}</div>
+        <div id="spend" class="h2 fw-bold">{{ userSpendings | php }}</div>
         <a id="2" onclick="opnDashboardForm(event)" class="fa-solid fa-plus remove-link"></a>
     </div>
     <div>
         <p class="h2 fw-bold">Allowance: </p>
-        <div class="h2 fw-bold">{{ userAllowance | php }}</div>
+        <div id="allow" class="h2 fw-bold">{{ userAllowance | php }}</div>
         <a id="3" onclick="opnDashboardForm(event)" class="fa-solid fa-plus remove-link"></a>
     </div>
-    <!-- [Transaction TABLE] -->
-    <table class="table table-striped">
+    <!-- [Transaction] TABLE -->
+    <table id="transactions-data" class="table table-striped">
         <thead>
             <th class="text-start">Transaction ID</th>
             <th class="text-end">Date</th>
@@ -40,7 +40,7 @@
             {% endfor %}
         </tbody>
     </table>
-    <!--[Input FORM]-->
+    <!--[Input] FORM-->
     <form id="data-entry" action="{{ url_for('getFormInput') }}" method="post">
         <div class="form-group">
             <label class="h3 fw-s"for="amtField">Amount</label>
