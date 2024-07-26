@@ -1,4 +1,5 @@
 let btnPressedId;
+let hasAddedFields = false;
 // Open the popup form
 function opnDashboardForm(e) {
     e.preventDefault();
@@ -43,8 +44,8 @@ window.addEventListener('DOMContentLoaded', function() {
                 updateDashboard(form, response);
             },
             error: function(err) {
-                console.log('Error: ' + err); 
-                alert('Error: ' + err) // DB
+                console.log('Error: ' + err); // DB
+                alert('Error: ' + err) 
             }
         });
     });
@@ -65,11 +66,47 @@ function updateDashboard(inputForm, response) {
     document.getElementById('save').innerText = formatToPHP(response.u_savings);
     document.getElementById('spend').innerText = formatToPHP(response.u_spendings);
     document.getElementById('allow').innerText = formatToPHP(response.u_allowance);
-    // Update Transaction Table
+    // Update Transaction Table: 
+    // TODO - align the first field
     let newEntry = transactionTable.insertRow(transactionTable.rows.length);
     for (let i = 0; i < FIELD_COUNT; i++) {
         let field = newEntry.insertCell(i);
         newEntry.classList.add((i == 0) ? "text-start" : "text-end");
         field.innerText = displayData[i];
     }
+}
+
+function showPasswordForm(e) {
+    e.preventDefault();
+    const profileForm = document.getElementById('profile-form');
+    if (hasAddedFields) {
+        return;
+    }
+    let newPass = createInputComponents();
+    newPass.setAttribute('id', 'new-pass');
+    let confirmPass = createInputComponents();
+    confirmPass.setAttribute('id', 'confirm-pass');
+
+    profileForm.appendChild(newPass);
+    profileForm.appendChild(confirmPass);
+    hasAddedFields = true;
+    profileForm.style.display = 'block';
+}   
+
+function createInputComponents() {
+    let inputAttr = {
+        type: 'password',
+        required: '',
+        class: 'form-control',
+        autocomplete: 'off',
+    };
+    let inputField = document.createElement('input');
+    for(attr in inputAttr) {
+        inputField.setAttribute(attr, inputAttr[attr]);
+    }
+    return inputField;
+}
+
+function showConfirmDialog(e) {
+
 }

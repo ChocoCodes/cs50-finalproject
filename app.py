@@ -39,7 +39,7 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
-@app.route("/", methods=['GET'])
+@app.route("/")
 @vd.login_required
 def dashboard():
     """ Handle user finances and transactions when logged in """
@@ -52,7 +52,7 @@ def dashboard():
 
     transactionHistory = db.execute(
         "SELECT * FROM transactions WHERE user_id = ?", 
-        session["user_id"]
+        (session["user_id"],)
     )
     
     if transactionHistory:
@@ -61,6 +61,18 @@ def dashboard():
             t['category'] = vd.toCategory(transacTypeNum, entryCategory)
     
     return render_template("index.html", userSavings=savings, userSpendings=spendings, userAllowance=allowance, userTransactions=transactionHistory)
+
+@app.route("/profile")
+@vd.login_required
+def profile():
+    counts = db.execute(
+        "SELECT COUNT(*) FROM goal_counts WHERE user_id = ?",
+        (session['user_id'],)
+    )
+    user = getLoginInfo(session['user_id'], True)
+    # TODO: Get goal tables
+    return render_template("profile.html", userName=user[0]['username'], goalCounts=counts[0]['COUNT(*)'])
+
 
 @app.route("/submit", methods=['POST'])
 @vd.login_required
@@ -81,10 +93,10 @@ def getFormInput():
         updateSpendings(rq_amount)
     if rq_btnId == 3:
         updateAllowance(rq_amount)
-    # Query to log transactions in to [Transactions] table
+    # Query to log transactions into [Transactions] table
     db.execute(
         "INSERT INTO transactions(user_id, transaction_type, transaction_date, amt) VALUES(?, ?, ?, ?)", 
-        session['user_id'], rq_btnId, rq_datetime, rq_amount
+        (session['user_id'], rq_btnId, rq_datetime, rq_amount)
     )
     # Queries to retrieve updated entries to [Transactions] and [Finances] table
     latest_transaction = getLatestEntry()
@@ -99,54 +111,71 @@ def getFormInput():
 
 def getUserFinances():
     """ Get user's finances from Finance DB """
-    data = db.execute(
+    financeData = db.execute(
         "SELECT * FROM finances WHERE user_id = ?", 
-        session["user_id"]
+        (session["user_id"],)
     )
-    return data
+    return financeData
+
 
 def getLatestEntry():
     """ Get latest transaction log from Transaction DB """
-    data = db.execute(
+    transactionData = db.execute(
         "SELECT * FROM transactions WHERE user_id = ? ORDER BY ROWID DESC LIMIT 1",
-        session['user_id']
+        (session['user_id'],)
     )
-    if data:
-        nType = data[0]['transaction_type']
-        data[0]['transaction_type'] = vd.toCategory(nType, entryCategory)
-    return data
+    if transactionData:
+        nType = transactionData[0]['transaction_type']
+        transactionData[0]['transaction_type'] = vd.toCategory(nType, entryCategory)
+    return transactionData
+
 
 def updateSavings(amount):
     """ Update savings from Finance DB """
     db.execute(
         "UPDATE finances SET savings = savings + ? WHERE user_id = ?",
-        amount, session['user_id']
+        (amount, session['user_id'])
     )
     db.execute(
         "UPDATE finances SET allowance = allowance - ? WHERE user_id = ?",
-        amount, session['user_id']
+        (amount, session['user_id'])
     )
     return
+
 
 def updateSpendings(amount):
     """ Update spendings from Finance DB """
     db.execute(
         "UPDATE finances SET spendings = spendings + ? WHERE user_id = ?",
-        amount, session['user_id']
+        (amount, session['user_id'])
     )
     db.execute(
         "UPDATE finances SET allowance = allowance - ? WHERE user_id = ?",
-        amount, session['user_id']
+        (amount, session['user_id'])
     )
     return
+
 
 def updateAllowance(amount):
     """ Update allowance from Finance DB """
     db.execute(
         "UPDATE finances SET allowance = allowance + ? WHERE user_id = ?",
-        amount, session['user_id']
+        (amount, session['user_id'])
     )
     return
+    
+
+def getLoginInfo(user, isUID):
+    if not isUID:
+        return db.execute(
+            "SELECT * FROM users WHERE username = ?", 
+            (user,)
+        )
+    return db.execute(
+        "SELECT * FROM users WHERE id = ?", 
+        (user,)    
+    )
+
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -156,9 +185,7 @@ def register():
         password = request.form.get("password")
         confirmedPassword = request.form.get("confirm")
 
-        userDB = db.execute(
-            "SELECT * FROM users WHERE username = ?", username
-        )
+        userDB = getLoginInfo(username, False)
         
         if len(userDB) != 0:
             return vd.apology("Username already exists.")
@@ -175,12 +202,11 @@ def register():
         hashedPassword = vd.generateHash(password, convertedSalt)
 
         db.execute(
-            "INSERT INTO users(username, hash, salt) VALUES(?, ?, ?)", username, hashedPassword, convertedSalt
+            "INSERT INTO users(username, hash, salt) VALUES(?, ?, ?)", 
+            (username, hashedPassword, convertedSalt)
         )
 
-        id = db.execute(
-            "SELECT * FROM users WHERE username = ?", username
-        )
+        id = getLoginInfo(username, False)
 
         session["user_id"] = id[0]["id"]
         return redirect("/")
@@ -197,9 +223,7 @@ def login():
         if not username or not password:
             return vd.apology("Input field/s are empty.")
         
-        rowUserData = db.execute(
-            "SELECT * FROM users WHERE username = ?", username
-        )
+        rowUserData = getLoginInfo(username, False)
         
         if len(rowUserData) != 1 or not vd.validatePassword(password, rowUserData[0]["salt"], rowUserData[0]["hash"]):
             return vd.apology("Invalid Username/Password!")

@@ -40,7 +40,8 @@ a.fnt {
 }
 
 /* [FORM] */
-#data-entry {
+#data-entry,
+#profile-form {
     display: none;
     font-family: 'Roboto Serif', sans-serif;
     border: 3px #f1f1f1 solid;

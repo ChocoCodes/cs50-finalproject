@@ -55,7 +55,7 @@ def toCategory(nTransacType, lookupDict):
     return equivCat.get(nTransacType)
 
 def mergeEntries(transactions, finances):
-    """"""
+    """ Create a dictionary with the transactions and finances data combined """
     merged_data = {
         'transaction_id': transactions[0]['id'],
         'amt': transactions[0]['amt'],

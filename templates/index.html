@@ -21,6 +21,18 @@
         <div id="allow" class="h2 fw-bold">{{ userAllowance | php }}</div>
         <a id="3" onclick="opnDashboardForm(event)" class="fa-solid fa-plus remove-link"></a>
     </div>
+    <!--[Input] FORM-->
+    <form id="data-entry" action="{{ url_for('getFormInput') }}" method="post">
+        <div class="form-group">
+            <label class="h3 fw-s"for="amtField">Amount</label>
+            <input autocomplete="off" type="number" name="amount" class="form-control" id="amtField" placeholder="Enter Amount" aria-describedby="inputNotif" required>
+            <small id="inputNotif" class="form-text text-muted">
+                Please ensure that the input is valid. No need to include commas and/or currency sign/s.
+            </small>
+        </div>
+        <button type="submit" id="sub-btn" class="btn btn-primary">Submit</button>
+        <button onclick="clsDashboardForm(event)" class="btn btn-danger">Cancel</button>
+    </form>
     <!-- [Transaction] TABLE -->
     <table id="transactions-data" class="table table-striped">
         <thead>
@@ -40,16 +52,5 @@
             {% endfor %}
         </tbody>
     </table>
-    <!--[Input] FORM-->
-    <form id="data-entry" action="{{ url_for('getFormInput') }}" method="post">
-        <div class="form-group">
-            <label class="h3 fw-s"for="amtField">Amount</label>
-            <input autocomplete="off" type="number" name="amount" class="form-control" id="amtField" placeholder="Enter Amount" aria-describedby="inputNotif" required>
-            <small id="inputNotif" class="form-text text-muted">
-                Please ensure that the input is valid. No need to include commas and/or currency sign/s.
-            </small>
-        </div>
-        <button type="submit" id="sub-btn" class="btn btn-primary">Submit</button>
-        <button onclick="clsDashboardForm(event)" class="btn btn-danger">Cancel</button>
-    </form>
+
 {% endblock %}
