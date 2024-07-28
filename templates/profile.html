@@ -7,13 +7,13 @@
 {% block main %}
     <div id="acc-info">
         <p class="h2 fw-bold">Account Information</p>
-        <p class="h2 fw-bold">{{ userName }}</p>
-        <button onclick="showPasswordForm(event)" class="btn btn-primary">Change Password</button>
-        <button onclick="showConfirmDialog(event)" class="btn btn-danger">Delete Account</button>
+        <p id="username" class="h2 fw-bold">{{ userName }}</p>
+        <button onclick="createPasswordForm(event)" class="btn btn-primary">Change Password</button>
+        <button onclick="showConfirmDelete(event)" class="btn btn-danger">Delete Account</button>
     </div>
     <div id="goal-count">
         <p class="h2 fw-bold">Total Goals</p>
-        <div id="spend" class="h2 fw-bold">{{ goalCounts }}</div>
+        <div class="h2 fw-bold">{{ goalCounts }}</div>
     </div>
     <!-- Dynamic Form -->
     <form id="profile-form"></form>

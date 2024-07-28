@@ -43,12 +43,13 @@ def after_request(response):
 @vd.login_required
 def dashboard():
     """ Handle user finances and transactions when logged in """
+    savings, spendings, allowance = 0.0, 0.0, 0.0
 
     userFinancesData = getUserFinances()
-
-    savings = userFinancesData[0]['savings']
-    spendings = userFinancesData[0]['spendings']
-    allowance = userFinancesData[0]['allowance']
+    if userFinancesData:
+        savings = userFinancesData[0]['savings']
+        spendings = userFinancesData[0]['spendings']
+        allowance = userFinancesData[0]['allowance']
 
     transactionHistory = db.execute(
         "SELECT * FROM transactions WHERE user_id = ?", 
@@ -96,7 +97,7 @@ def getFormInput():
     # Query to log transactions into [Transactions] table
     db.execute(
         "INSERT INTO transactions(user_id, transaction_type, transaction_date, amt) VALUES(?, ?, ?, ?)", 
-        (session['user_id'], rq_btnId, rq_datetime, rq_amount)
+        session['user_id'], rq_btnId, rq_datetime, rq_amount
     )
     # Queries to retrieve updated entries to [Transactions] and [Finances] table
     latest_transaction = getLatestEntry()
@@ -106,8 +107,30 @@ def getFormInput():
     # Merge data into a single JSON-like format and send to JS
     merged_data = vd.mergeEntries(latest_transaction, updated_finances)
     print(f"transaction_id: {merged_data['transaction_id']}, amt: {merged_data['amt']}, type: {merged_data['type']}, date: {merged_data['date']}, u_savings: {merged_data['u_savings']}, u_spendings: {merged_data['u_spendings']}, u_allowance: {merged_data['u_allowance']}")
-    return jsonify(merged_data)
+    return jsonify(merged_data), 200
 
+
+@app.route("/delete", methods=['POST'])
+@vd.login_required
+def deleteUserData():
+    """ Delete all user data from all tables in the DB """
+    delete_request = request.get_json()
+    print(f"Received: {delete_request}")
+    username = delete_request['username']
+    print(f"Username: {username}")
+    # db.execute(
+    #     "DELETE FROM finances WHERE user_id = ?", 
+    #     (session['user_id'],)
+    # )
+    # db.execute(
+    #     "DELETE FROM transactions WHERE user_id = ?", 
+    #     (session['user_id'],)
+    # )
+    # db.execute(
+    #     "DELETE FROM users WHERE username = ?", 
+    #     (username,)
+    # )
+    return jsonify({'result': 'success'}), 200
 
 def getUserFinances():
     """ Get user's finances from Finance DB """
@@ -134,11 +157,11 @@ def updateSavings(amount):
     """ Update savings from Finance DB """
     db.execute(
         "UPDATE finances SET savings = savings + ? WHERE user_id = ?",
-        (amount, session['user_id'])
+        amount, session['user_id']
     )
     db.execute(
         "UPDATE finances SET allowance = allowance - ? WHERE user_id = ?",
-        (amount, session['user_id'])
+        amount, session['user_id']
     )
     return
 
@@ -147,11 +170,11 @@ def updateSpendings(amount):
     """ Update spendings from Finance DB """
     db.execute(
         "UPDATE finances SET spendings = spendings + ? WHERE user_id = ?",
-        (amount, session['user_id'])
+        amount, session['user_id']
     )
     db.execute(
         "UPDATE finances SET allowance = allowance - ? WHERE user_id = ?",
-        (amount, session['user_id'])
+        amount, session['user_id']
     )
     return
 
@@ -160,7 +183,7 @@ def updateAllowance(amount):
     """ Update allowance from Finance DB """
     db.execute(
         "UPDATE finances SET allowance = allowance + ? WHERE user_id = ?",
-        (amount, session['user_id'])
+        amount, session['user_id']
     )
     return
     
@@ -180,6 +203,7 @@ def getLoginInfo(user, isUID):
 @app.route("/register", methods=["GET", "POST"])
 def register():
     """ Add more user/s """
+    fSavings, fSpendings, fAllowance = 0.0, 0.0, 0.0
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
@@ -203,7 +227,11 @@ def register():
 
         db.execute(
             "INSERT INTO users(username, hash, salt) VALUES(?, ?, ?)", 
-            (username, hashedPassword, convertedSalt)
+            username, hashedPassword, convertedSalt
+        )
+        db.execute(
+            "INSERT INTO finances(user_id, savings, spendings, allowance) VALUES(?, ?, ?, ?)", 
+            session['user_id'], fSavings, fSpendings, fAllowance
         )
 
         id = getLoginInfo(username, False)
