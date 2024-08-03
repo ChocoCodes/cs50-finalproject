@@ -86,28 +86,6 @@ function updateDashboard(inputForm, response) {
 }
 
 
-let inputAttr = {
-    id: '',
-    type: 'password',
-    placeholder: '',
-    required: '',
-    class: 'form-control',
-    autocomplete: 'off',
-};
-let labelAttr = {
-    class: 'h3 fw-s'
-};
-let smallAttr = {
-    id: '',
-    class: 'form-text text-muted'
-};
-let btnAttr = {
-    class: '',
-    id: ''
-};
-const btnClass = ['btn btn-primary', 'btn btn-danger'];
-
-
 function showConfirmDelete(e) {
     e.preventDefault();
     if(hasAddedComponents) {
@@ -124,7 +102,7 @@ function showConfirmDelete(e) {
 
     yesBtn.addEventListener('click', function() {
         username = document.getElementById('username').textContent.trim();
-        console.log(username);
+        console.log(username); // DB
         sendDeleteRequest(username);
     });
 
@@ -220,72 +198,8 @@ function sendDeleteRequest(username) {
 }
 
 
-function createDiv(divClass) {
-    newDiv = document.createElement('div');
-    newDiv.setAttribute('class', divClass);
-    return newDiv;
-}
-
-
-function createInputComponent(attributes, id, placeholder) {
-    let input = document.createElement('input');
-    for(let a in attributes) {
-        if (a == "id") {
-            attributes.id = id;
-        }
-        if (a == "placeholder") {
-            attributes.placeholder = placeholder;
-        }
-        input.setAttribute(a, attributes[a]);
-    }
-    return input;
-}
-
-
-function createLabelComponent(attributes, text) {
-    let label = document.createElement('label');
-    label.innerHTML = text;
-    for (let a in attributes) {
-        label.setAttribute(a, attributes[a]);
-    }
-    return label;
-}
-
-
-function createSmallComponent(attributes, text, id) {
-    let small = document.createElement('small');
-    small.innerHTML = text;
-    for (let a in attributes) {
-        if (a == "id") {
-            attributes.id = id;
-        } 
-        small.setAttribute(a, attributes[a]);
-    }
-    return small;
-}
-
-
-function createBtnComponent(attributes, text, id, idx) {
-    let newBtn = document.createElement('button');
-    newBtn.innerHTML = text;
-    for(let a in attributes) {
-        if (a == "class") {
-            attributes.class = btnClass[idx];
-        }
-        if (a == "id") {
-            attributes.id = id;
-        }
-        newBtn.setAttribute(a, attributes[a]);
-    }
-    return newBtn;
-}
-
-function testDebugPass(newPass, confPass) {
-    if (newPass === '' && confPass === '') return false;
-    return newPass === confPass;
-}
-
 function checkPassReq(newPass, confPass) {
+    if (newPass === '' || confPass === '') return false;
     if (!(newPass === confPass)) return false;
     const charReq = ['+', '-', '#', '!', '?', '_', '@', '%', '&', '*'];
     let charCtr = 0, numCtr = 0;
@@ -299,10 +213,41 @@ function checkPassReq(newPass, confPass) {
 }
 
 function validatePassForm(newPass, reEntered, form) {
-    if (!testDebugPass(newPass, reEntered)) {
-        form.reset();
+    if (!checkPassReq(newPass, reEntered)) {
         alert('passwords are not equal');
-    } else {
-        alert('passwords are equal');
-    }
+        form.reset();
+        return;
+    } 
+    sendPasswordRequest(newPass);
+}
+
+function sendPasswordRequest(pass) {
+    let passData = {
+        'newPassword': pass
+    };
+    console.log(passData); // DB
+    $.ajax({
+        url: '/change',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(passData),
+        success: function(response) {
+            console.log('Response Converted: ' + JSON.stringify(response)); // DB
+            alert('Password change successfully!');
+        },
+        error: function(err) {
+            console.log('Error: ' + err); // DB
+            alert('Error: ' + err) 
+        }
+    });
+
+}
+
+function createNewGoal(e) {
+    e.preventDefault();
+    const profileForm = document.getElementById('profile-form');
+    const fieldGrp = createDiv('form-group');
+
+    profileForm.append(fieldGrp);
+    showForm(profileForm);
 }

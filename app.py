@@ -132,6 +132,22 @@ def deleteUserData():
     # )
     return jsonify({'result': 'success'}), 200
 
+@app.route('/change', methods=['POST'])
+@vd.login_required
+def editUserPassword():
+    newPass = request.get_json()['newPassword']
+    print(f'New: {newPass}')
+    newSalt = vd.generatePasswordSalt()
+    conv_newSalt = newSalt.hex()
+    newHash = vd.generateHash(newPass, conv_newSalt)
+    print(f'New Salt: {newSalt}, Converted: {conv_newSalt}, New Hash: {newHash}')
+    # TODO: c. Add to db
+    #db.execute(
+    #    "UPDATE users SET hash = ?, salt = ? WHERE id = ?", newHash, conv_newSalt, session['user_id']
+    #)
+    return jsonify({'result': 'success'}), 200
+
+
 def getUserFinances():
     """ Get user's finances from Finance DB """
     financeData = db.execute(
