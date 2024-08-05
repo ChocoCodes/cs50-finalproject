@@ -9,7 +9,7 @@
         <p class="h2 fw-bold">Account Information</p>
         <p id="username" class="h2 fw-bold">{{ userName }}</p>
         <button onclick="createPasswordForm(event)" class="btn btn-primary">Change Password</button>
-        <button onclick="showConfirmDelete(event)" class="btn btn-danger">Delete Account</button>
+        <button onclick="showDeleteForm(event)" class="btn btn-danger">Delete Account</button>
     </div>
     <div id="goal-count">
         <p class="h2 fw-bold">Total Goals</p>
@@ -18,7 +18,7 @@
     <!-- Dynamic Form -->
     <form id="profile-form"></form>
     <!-- [GOALS] Table-->
-    <div id="goals-settings">
+    <div id="goal-settings">
         <a id="new-goal" onclick="createNewGoal(event)">New</a>
         <a id="new-goal" onclick="editGoal(event)">Edit</a>
         <a id="new-goal" onclick="removeGoal(event)">Remove</a>

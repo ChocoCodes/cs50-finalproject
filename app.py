@@ -22,7 +22,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure CS50 library to use database
-db = SQL("sqlite:///finnaorganize.db")
+db = SQL(os.getenv('DB_URL'))
 
 entryCategory = {
     'buttonID': [1, 2, 3],
@@ -135,7 +135,7 @@ def deleteUserData():
 @app.route('/change', methods=['POST'])
 @vd.login_required
 def editUserPassword():
-    newPass = request.get_json()['newPassword']
+    newPass = request.get_json()['new_password']
     print(f'New: {newPass}')
     newSalt = vd.generatePasswordSalt()
     conv_newSalt = newSalt.hex()
@@ -147,6 +147,13 @@ def editUserPassword():
     #)
     return jsonify({'result': 'success'}), 200
 
+@app.route('/create_new', methods=['POST'])
+@vd.login_required
+def createGoal():
+    print('test')
+    goalInfo = request.get_json()
+    print(f'Goal Info: {goalInfo}')
+    return jsonify({'result': 'success'}), 200
 
 def getUserFinances():
     """ Get user's finances from Finance DB """

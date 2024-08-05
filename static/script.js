@@ -1,55 +1,45 @@
 let btnPressedId;
 let hasAddedComponents = false;
-// Open the popup form
-function opnDashboardForm(e) {
-    e.preventDefault();
-    btnPressedId = e.target.id;
-    document.getElementById('data-entry').style.display = "block";
-    return;
-
-}
-
-
-// Close the popup form
-function clsDashboardForm(e) {
-    e.preventDefault();
-    document.getElementById('data-entry').style.display = "none";
-}
 
 
 // Extract button ID and the amount, then send to back-end as JSON
 window.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('data-entry');
     const submit = document.getElementById('sub-btn');
+    const url = '/submit';
     if (submit) {
         submit.addEventListener('click', function(e){
             e.preventDefault();
-            sendData(form);
+            let amtIn = parseFloat(document.getElementById('amtField').value);
+            if (!checkValue(amtIn)) {
+                alert('Amount cannot be of negative value.');
+                form.reset();
+                return;
+            }
+            // TODO: Send as a single object not array of objects
+            let clientData = [{
+                btnId: btnPressedId, 
+                amount: amtIn
+            }];
+            sendData(form, clientData, url);
         });
     }
 });
 
-function sendData(form) {
-    let amtIn = parseFloat(document.getElementById('amtField').value);
-    if (amtIn < 0) {
-        alert('Amount cannot be of negative value.');
-        form.reset();
-        return;
-    }
-
-    let clientData = [{
-        'btnId': btnPressedId, 
-        'amount': amtIn
-    }];
-
+function sendData(form, data, url) {
     $.ajax({
-        url: '/submit',
+        url: url,
         type: 'POST',
         contentType: 'application/json',
-        data: JSON.stringify(clientData),
+        data: JSON.stringify(data),
         success: function(response) {
-            console.log('Response Converted: ' + JSON.stringify(response)); // DB
-            updateDashboard(form, response);
+            if (url == '/submit') {
+                console.log('Response Converted: ' + JSON.stringify(response)); // DB
+                updateDashboard(form, response);
+            }
+            if (url == '/create_new') console.log(data);
+            if (url == '/change') alert('Password changed successfully!');
+            if (url == '/delete') window.location.href = "/login";
         },
         error: function(err) {
             console.log('Error: ' + err); // DB
@@ -58,8 +48,13 @@ function sendData(form) {
     });
 }
 
+
 function formatToPHP(amount) {
     return '₱' + amount.toFixed(2);
+}
+
+function checkValue(amount) {
+    return amount <= 0.0;
 }
 
 
@@ -86,124 +81,11 @@ function updateDashboard(inputForm, response) {
 }
 
 
-function showConfirmDelete(e) {
-    e.preventDefault();
-    if(hasAddedComponents) {
-        return;
-    }
-
-    const profileForm = document.getElementById('profile-form');
-    const newDiv = createDiv('form-group');
-    let msg = 'Are you sure you want to delete your account? This process is irreversible.';
-    let label = createLabelComponent(labelAttr, 'Delete Account');
-    let confirmText = createSmallComponent(smallAttr, msg, 'deleteNotif');
-    let yesBtn = createBtnComponent(btnAttr, 'Yes', 'yes-btn', 0), 
-    noBtn = createBtnComponent(btnAttr, 'No', 'no-btn', 1);
-
-    yesBtn.addEventListener('click', function() {
-        username = document.getElementById('username').textContent.trim();
-        console.log(username); // DB
-        sendDeleteRequest(username);
-    });
-
-    noBtn.addEventListener('click', function() {
-        clsProfileForm(profileForm);
-    });
-
-    newDiv.appendChild(label);
-    newDiv.appendChild(document.createElement('br'));
-    newDiv.appendChild(confirmText);
-    profileForm.appendChild(newDiv);
-    profileForm.appendChild(yesBtn);
-    profileForm.appendChild(noBtn);
-    
-    showForm(profileForm);
-}
-
-
-
-function createPasswordForm(e) {
-    e.preventDefault();
-    if (hasAddedComponents) {
-        return;
-    }
-    
-    const profileForm = document.getElementById('profile-form');
-    const inputFieldIds = ['new-pass', 'confirm-pass'];
-    const inputPlaceholders = ['Enter New Password', 'Re-enter New Password'];
-    const inputReqs = ['Password should have the ff: 1 symbol, 1 number and length of 8 or more.', 'Please ensure that both inputs are the same.'];
-    const smallNotifIds = ['npNotif', 'cpNotif'];
-    const btnText = ['Change', 'Cancel'];
-
-    const newDiv = createDiv('form-group');
-    let label = createLabelComponent(labelAttr, 'Change Password');
-    let newPass = createInputComponent(inputAttr, inputFieldIds[0], inputPlaceholders[0]),
-    confirmPass = createInputComponent(inputAttr, inputFieldIds[1], inputPlaceholders[1]);
-    let npSubTxt = createSmallComponent(smallAttr, inputReqs[0], smallNotifIds[0]), 
-    cpSubTxt = createSmallComponent(smallAttr, inputReqs[1], smallNotifIds[1]);
-    let submitBtn = createBtnComponent(btnAttr, btnText[0], 'sub-cp', 0),
-    cancelBtn = createBtnComponent(btnAttr, btnText[1], 'cancel-cp', 1);
-    
-    submitBtn.addEventListener('click', function() {
-        let newPass = document.getElementById(inputFieldIds[0]).value, 
-        confPass = document.getElementById(inputFieldIds[1]).value;
-        validatePassForm(newPass, confPass, profileForm);
-    });
-    cancelBtn.addEventListener('click', function() {
-        clsProfileForm(profileForm);
-    });
-    
-    newDiv.appendChild(label);
-    newDiv.appendChild(newPass);
-    newDiv.appendChild(npSubTxt);
-    newDiv.appendChild(confirmPass);
-    newDiv.appendChild(cpSubTxt);
-    profileForm.appendChild(newDiv);
-    profileForm.appendChild(submitBtn);
-    profileForm.appendChild(cancelBtn);
-    
-    showForm(profileForm);
-}   
-
-function showForm(form) {
-    hasAddedComponents = true;
-    form.style.display = 'block';
-}
-
-function clsProfileForm(form) {
-    form.style.display = "none";
-    form.innerHTML = '';
-    hasAddedComponents = false;
-}
-
-
-function sendDeleteRequest(username) {
-    let userData = {
-        'username': username
-    };
-    $.ajax({
-        url: '/delete',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(userData),
-        success: function(response) {
-            console.log('Response Converted: ' + JSON.stringify(response)); // DB
-            window.location.href = "/login";
-        },
-        error: function(err) {
-            console.log('Error: ' + err); // DB
-            alert('Error: ' + err);
-        }
-    });
-}
-
-
 function checkPassReq(newPass, confPass) {
     if (newPass === '' || confPass === '') return false;
     if (!(newPass === confPass)) return false;
     const charReq = ['+', '-', '#', '!', '?', '_', '@', '%', '&', '*'];
-    let charCtr = 0, numCtr = 0;
-    let len = newPass.length;
+    let charCtr = 0, numCtr = 0, len = newPass.length;
 
     for (let i = 0; i < len; i++) {
         if (charReq.includes(newPass[i])) charCtr++;
@@ -212,42 +94,4 @@ function checkPassReq(newPass, confPass) {
     return !((charCtr === 0 && numCtr === 0) || len < 8);
 }
 
-function validatePassForm(newPass, reEntered, form) {
-    if (!checkPassReq(newPass, reEntered)) {
-        alert('passwords are not equal');
-        form.reset();
-        return;
-    } 
-    sendPasswordRequest(newPass);
-}
 
-function sendPasswordRequest(pass) {
-    let passData = {
-        'newPassword': pass
-    };
-    console.log(passData); // DB
-    $.ajax({
-        url: '/change',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(passData),
-        success: function(response) {
-            console.log('Response Converted: ' + JSON.stringify(response)); // DB
-            alert('Password change successfully!');
-        },
-        error: function(err) {
-            console.log('Error: ' + err); // DB
-            alert('Error: ' + err) 
-        }
-    });
-
-}
-
-function createNewGoal(e) {
-    e.preventDefault();
-    const profileForm = document.getElementById('profile-form');
-    const fieldGrp = createDiv('form-group');
-
-    profileForm.append(fieldGrp);
-    showForm(profileForm);
-}

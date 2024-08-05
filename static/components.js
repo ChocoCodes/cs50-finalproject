@@ -8,12 +8,8 @@ function createBtnComponent(attributes, text, id, idx) {
     let newBtn = document.createElement('button');
     newBtn.innerHTML = text;
     for(let a in attributes) {
-        if (a == "class") {
-            attributes.class = btnClass[idx];
-        }
-        if (a == "id") {
-            attributes.id = id;
-        }
+        if (a == "class") attributes.class = btnClass[idx];
+        if (a == "id") attributes.id = id;
         newBtn.setAttribute(a, attributes[a]);
     }
     return newBtn;
@@ -25,15 +21,12 @@ function createDiv(divClass) {
 }
 
 
-function createInputComponent(attributes, id, placeholder) {
+function createInputComponent(attributes, id, placeholder, type) {
     let input = document.createElement('input');
     for(let a in attributes) {
-        if (a == "id") {
-            attributes.id = id;
-        }
-        if (a == "placeholder") {
-            attributes.placeholder = placeholder;
-        }
+        if (a == 'type') attributes.type = type;
+        if (a == "id") attributes.id = id;
+        if (a == "placeholder") attributes.placeholder = placeholder;
         input.setAttribute(a, attributes[a]);
     }
     return input;
@@ -54,9 +47,7 @@ function createSmallComponent(attributes, text, id) {
     let small = document.createElement('small');
     small.innerHTML = text;
     for (let a in attributes) {
-        if (a == "id") {
-            attributes.id = id;
-        } 
+        if (a == "id") attributes.id = id;
         small.setAttribute(a, attributes[a]);
     }
     return small;

@@ -5,7 +5,7 @@ function testDebugPrint1(e) {
 
 let inputAttr = {
     id: '',
-    type: 'password',
+    type: '',
     placeholder: '',
     required: '',
     class: 'form-control',
