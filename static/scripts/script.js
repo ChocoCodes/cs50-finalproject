@@ -11,8 +11,8 @@ window.addEventListener('DOMContentLoaded', function() {
         submit.addEventListener('click', function(e){
             e.preventDefault();
             let amtIn = parseFloat(document.getElementById('amtField').value);
-            if (!checkValue(amtIn)) {
-                alert('Amount cannot be of negative value.');
+            if (checkValue(amtIn)) {
+                alert('Amount cannot be 0 or less.');
                 form.reset();
                 return;
             }
@@ -25,6 +25,7 @@ window.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
 
 function sendData(form, data, url) {
     $.ajax({

@@ -52,6 +52,12 @@ function createNewGoal(e) {
 }
 
 
+function editGoal(e) {
+    e.preventDefault();
+    
+}
+
+
 function showForm(form) {
     hasAddedComponents = true;
     form.style.display = 'block';
@@ -95,10 +101,10 @@ function showDeleteForm(e) {
     noBtn = createBtnComponent(btnAttr, 'No', 'no-btn', 1);
 
     yesBtn.addEventListener('click', function() {
-        username = document.getElementById('username').textContent.trim();
+        uName = document.getElementById('username').textContent.trim();
         console.log(username); // DB
         let userData = {
-            'username': username
+            username: uName
         };
         sendData(profileForm, userData, url);
     });
@@ -150,7 +156,7 @@ function createPasswordForm(e) {
             return;
         } 
         let newPassData = {
-            'new_password': newPass
+            new_password: newPass
         };
         sendData(profileForm, newPassData, url);
     });

@@ -23,4 +23,26 @@
         <a id="new-goal" onclick="editGoal(event)">Edit</a>
         <a id="new-goal" onclick="removeGoal(event)">Remove</a>
     </div>
+    <div>
+        <table id="goals-table" class="table table-striped">
+            <thead>
+                <th class="text-start">Name</th>
+                <th class="text-end">Description</th>
+                <th class="text-end">Total</th>
+                <th class="text-end">Current</th>
+                <th class="text-end">Progress</th>
+            </thead>
+            <tbody>
+                {% for goal in goals %}
+                <tr>
+                    <td class="text-start">{{ goal['name'] }}</td>
+                    <td class="text-end">{{ goal['desc'] }}</td>
+                    <td class="text-end">{{ goal['total_amt'] }}</td>
+                    <td class="text-end">{{ goal['curr_dep'] }}</td>
+                    <td class="text-end">{{ goal['progress'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

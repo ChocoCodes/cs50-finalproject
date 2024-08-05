@@ -42,12 +42,12 @@
             <th class="text-end">Amount</th>
         </thead>
         <tbody>
-            {% for transactions in userTransactions %}
+            {% for transaction in userTransactions %}
             <tr>
-                <td class="text-start">{{ transactions['id'] }}</td>
-                <td class="text-end">{{ transactions['transaction_date'] }}</td>
-                <td class="text-end">{{ transactions['category'] }}</td>
-                <td class="text-end">{{ transactions['amt'] | php }}</td>
+                <td class="text-start">{{ transaction['id'] }}</td>
+                <td class="text-end">{{ transaction['transaction_date'] }}</td>
+                <td class="text-end">{{ transaction['category'] }}</td>
+                <td class="text-end">{{ transaction['amt'] | php }}</td>
             </tr>
             {% endfor %}
         </tbody>

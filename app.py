@@ -57,22 +57,26 @@ def dashboard():
     )
     
     if transactionHistory:
-        for t in transactionHistory:
-            transacTypeNum = t['transaction_type']
-            t['category'] = vd.toCategory(transacTypeNum, entryCategory)
-    
+        for transaction in transactionHistory:
+            transacTypeNum = transaction['transaction_type']
+            transaction['category'] = vd.toCategory(transacTypeNum, entryCategory)
     return render_template("index.html", userSavings=savings, userSpendings=spendings, userAllowance=allowance, userTransactions=transactionHistory)
 
 @app.route("/profile")
 @vd.login_required
 def profile():
+    """ Load information for profile page """
     counts = db.execute(
         "SELECT COUNT(*) FROM goal_counts WHERE user_id = ?",
         (session['user_id'],)
     )
     user = getLoginInfo(session['user_id'], True)
-    # TODO: Get goal tables
-    return render_template("profile.html", userName=user[0]['username'], goalCounts=counts[0]['COUNT(*)'])
+    goalData = getUserGoals()
+    if goalData: 
+        for goal in goalData: 
+            progress = (goal['curr_dep'] / goal['total_amt']) * 100
+            goal['progress'] = f'{progress:.2f}%'
+    return render_template("profile.html", userName=user[0]['username'], goalCounts=counts[0]['COUNT(*)'], goals=goalData)
 
 
 @app.route("/submit", methods=['POST'])
@@ -118,42 +122,60 @@ def deleteUserData():
     print(f"Received: {delete_request}")
     username = delete_request['username']
     print(f"Username: {username}")
-    # db.execute(
-    #     "DELETE FROM finances WHERE user_id = ?", 
-    #     (session['user_id'],)
-    # )
-    # db.execute(
-    #     "DELETE FROM transactions WHERE user_id = ?", 
-    #     (session['user_id'],)
-    # )
-    # db.execute(
-    #     "DELETE FROM users WHERE username = ?", 
-    #     (username,)
-    # )
+    db.execute(
+        "DELETE FROM finances WHERE user_id = ?", 
+        (session['user_id'],)
+    )
+    db.execute(
+        "DELETE FROM transactions WHERE user_id = ?", 
+        (session['user_id'],)
+    )
+    db.execute(
+        "DELETE FROM users WHERE username = ?", 
+        (username,)
+    )
     return jsonify({'result': 'success'}), 200
 
 @app.route('/change', methods=['POST'])
 @vd.login_required
 def editUserPassword():
+    """ Change user passwords """
     newPass = request.get_json()['new_password']
     print(f'New: {newPass}')
     newSalt = vd.generatePasswordSalt()
     conv_newSalt = newSalt.hex()
     newHash = vd.generateHash(newPass, conv_newSalt)
     print(f'New Salt: {newSalt}, Converted: {conv_newSalt}, New Hash: {newHash}')
-    # TODO: c. Add to db
-    #db.execute(
-    #    "UPDATE users SET hash = ?, salt = ? WHERE id = ?", newHash, conv_newSalt, session['user_id']
-    #)
+    db.execute(
+        "UPDATE users SET hash = ?, salt = ? WHERE id = ?", newHash, conv_newSalt, session['user_id']
+    )
     return jsonify({'result': 'success'}), 200
+
 
 @app.route('/create_new', methods=['POST'])
 @vd.login_required
 def createGoal():
+    """ Add new user goals """
     print('test')
     goalInfo = request.get_json()
     print(f'Goal Info: {goalInfo}')
     return jsonify({'result': 'success'}), 200
+
+
+@app.route('/goal_data')
+def sendGoals():
+    """ Send user's goal data as JSON to the client """
+    return jsonify(getUserGoals()), 200
+
+
+def getUserGoals():
+    """ Extract user goals from the Goals_Info DB """
+    goals = db.execute(
+        "SELECT goals_info.* FROM goal_counts JOIN goals_info ON goal_counts.goal_ID = goals_info.id WHERE goal_counts.user_ID = ?",
+        (session["user_id"],)
+    )
+    return goals[0]
+
 
 def getUserFinances():
     """ Get user's finances from Finance DB """
