@@ -39,6 +39,7 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
+
 @app.route("/")
 @vd.login_required
 def dashboard():
@@ -62,6 +63,7 @@ def dashboard():
             transaction['category'] = vd.toCategory(transacTypeNum, entryCategory)
     return render_template("index.html", userSavings=savings, userSpendings=spendings, userAllowance=allowance, userTransactions=transactionHistory)
 
+
 @app.route("/profile")
 @vd.login_required
 def profile():
@@ -74,8 +76,7 @@ def profile():
     goalData = getUserGoals()
     if goalData: 
         for goal in goalData: 
-            progress = (goal['curr_dep'] / goal['total_amt']) * 100
-            goal['progress'] = f'{progress:.2f}%'
+            goal['progress'] = vd.getPercent(goal['curr_dep'], goal['total_amt'])
     return render_template("profile.html", userName=user[0]['username'], goalCounts=counts[0]['COUNT(*)'], goals=goalData)
 
 
@@ -84,12 +85,9 @@ def profile():
 def getFormInput():
     """ Process dashboard form submission/s """
     request_userEntry = request.get_json()
-    rq_converted = vd.toDict(request_userEntry)
     rq_datetime = vd.getCurrTime()
-    rq_btnId, rq_amount = 0, 0.0
-    for id, amt in rq_converted.items():
-        rq_btnId = int(id)
-        rq_amount = float(amt)
+    rq_btnId = int(request_userEntry['btn_id'])
+    rq_amount = float(request_userEntry['amt'])
     print(f"Button ID: {rq_btnId}, Amount: {rq_amount}, Time: {rq_datetime}")
     # Queries to update [Finances] table
     if rq_btnId == 1:
@@ -136,6 +134,7 @@ def deleteUserData():
     )
     return jsonify({'result': 'success'}), 200
 
+
 @app.route('/change', methods=['POST'])
 @vd.login_required
 def editUserPassword():
@@ -147,7 +146,8 @@ def editUserPassword():
     newHash = vd.generateHash(newPass, conv_newSalt)
     print(f'New Salt: {newSalt}, Converted: {conv_newSalt}, New Hash: {newHash}')
     db.execute(
-        "UPDATE users SET hash = ?, salt = ? WHERE id = ?", newHash, conv_newSalt, session['user_id']
+        "UPDATE users SET hash = ?, salt = ? WHERE id = ?", 
+        newHash, conv_newSalt, session['user_id']
     )
     return jsonify({'result': 'success'}), 200
 
@@ -156,9 +156,21 @@ def editUserPassword():
 @vd.login_required
 def createGoal():
     """ Add new user goals """
-    print('test')
     goalInfo = request.get_json()
-    print(f'Goal Info: {goalInfo}')
+    curr_dep = 0.0
+    goalName = goalInfo['goal_name']
+    goalDesc = goalInfo['goal_desc'] 
+    goalTotal = float(goalInfo['goal_amt'])
+    print(f'Goal Info: {goalInfo}, Name: {goalName}, Desc: {goalDesc}, Total: {goalTotal}, Current: {curr_dep}')
+    db.execute(
+        "INSERT INTO goals_info(name, desc, total_amt, curr_dep) VALUES(?, ?, ?, ?)", 
+        goalName, goalDesc, goalTotal, curr_dep
+    )
+    latestGoalID = getGoalID()
+    db.execute(
+        "INSERT INTO goal_counts(user_ID, goal_ID) VALUES(?, ?)",
+        session['user_id'], latestGoalID
+    )
     return jsonify({'result': 'success'}), 200
 
 
@@ -168,13 +180,20 @@ def sendGoals():
     return jsonify(getUserGoals()), 200
 
 
+def getGoalID():
+    goalID = db.execute(
+        "SELECT id FROM goals_info ORDER BY ROWID DESC LIMIT 1"
+    )
+    return goalID[0]['id'] if goalID else None
+
+
 def getUserGoals():
     """ Extract user goals from the Goals_Info DB """
     goals = db.execute(
         "SELECT goals_info.* FROM goal_counts JOIN goals_info ON goal_counts.goal_ID = goals_info.id WHERE goal_counts.user_ID = ?",
-        (session["user_id"],)
+        session["user_id"]
     )
-    return goals[0]
+    return goals
 
 
 def getUserFinances():
@@ -285,6 +304,7 @@ def register():
         return redirect("/")
     return render_template("register.html")
 
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """ Log user/s in to the app """
@@ -304,6 +324,7 @@ def login():
         session["user_id"] = rowUserData[0]["id"]
         return redirect("/")
     return render_template("login.html")
+
 
 @app.route("/logout")
 def logout():

@@ -13,7 +13,7 @@ function createNewGoal(e) {
     gAmt = createInputComponent(inputAttr, 'g-amt', 'Enter Goal Amount', 'number');
     let submitBtn = createBtnComponent(btnAttr, 'Submit', 'gsubmit-btn', 0);
     cancelBtn = createBtnComponent(btnAttr, 'Cancel', 'gcancel-btn', 1);
-    // ERR TODO: fields not displaying anything, Object is not printed
+
     submitBtn.addEventListener('click', function(e) {
         e.preventDefault();
         const name = gName.value, 
@@ -51,10 +51,22 @@ function createNewGoal(e) {
     showForm(profileForm);
 }
 
-
+// TODO
 function editGoal(e) {
     e.preventDefault();
-    
+    const profileForm = document.getElementById('profile-form');
+    const fieldGrp = createDiv('form-group');
+    const url = '/edit_goal';
+    getGoals(function(goals) {
+        console.log(goals);
+        let editName = createInputComponent(inputAttr, 'new-name', 'Enter Name', 'text'), 
+        editDesc = createInputComponent(inputAttr, 'new-desc', 'Enter Description', 'text'),
+        editTotal = createInputComponent(nputAttr, 'new-total', 'Enter Updated Amount', 'number');
+        fieldGrp.append(editName);
+        fieldGrp.append(editDesc);
+        fieldGrp.append(editTotal);
+    });
+
 }
 
 
@@ -100,7 +112,8 @@ function showDeleteForm(e) {
     let yesBtn = createBtnComponent(btnAttr, 'Yes', 'yes-btn', 0), 
     noBtn = createBtnComponent(btnAttr, 'No', 'no-btn', 1);
 
-    yesBtn.addEventListener('click', function() {
+    yesBtn.addEventListener('click', function(e) {
+        e.preventDefault();
         uName = document.getElementById('username').textContent.trim();
         console.log(username); // DB
         let userData = {
@@ -109,7 +122,8 @@ function showDeleteForm(e) {
         sendData(profileForm, userData, url);
     });
 
-    noBtn.addEventListener('click', function() {
+    noBtn.addEventListener('click', function(e) {
+        e.preventDefault();
         clsProfileForm(profileForm);
     });
 
@@ -147,7 +161,8 @@ function createPasswordForm(e) {
     let submitBtn = createBtnComponent(btnAttr, btnText[0], 'sub-cp', 0),
     cancelBtn = createBtnComponent(btnAttr, btnText[1], 'cancel-cp', 1);
     
-    submitBtn.addEventListener('click', function() {
+    submitBtn.addEventListener('click', function(e) {
+        e.preventDefault();
         let newPass = document.getElementById(inputFieldIds[0]).value, 
         confPass = document.getElementById(inputFieldIds[1]).value;
         if (!checkPassReq(newPass, confPass)) {
@@ -160,7 +175,8 @@ function createPasswordForm(e) {
         };
         sendData(profileForm, newPassData, url);
     });
-    cancelBtn.addEventListener('click', function() {
+    cancelBtn.addEventListener('click', function(e) {
+        e.preventDefault();
         clsProfileForm(profileForm);
     });
     

@@ -17,10 +17,10 @@ window.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             // TODO: Send as a single object not array of objects
-            let clientData = [{
-                btnId: btnPressedId, 
-                amount: amtIn
-            }];
+            let clientData = {
+                btn_id: btnPressedId, 
+                amt: amtIn
+            };
             sendData(form, clientData, url);
         });
     }
@@ -43,8 +43,9 @@ function sendData(form, data, url) {
             if (url == '/delete') window.location.href = "/login";
         },
         error: function(err) {
-            console.log('Error: ' + err); // DB
-            alert('Error: ' + err) 
+            e = JSON.stringify(err)
+            console.log('Error: ' + e); // DB
+            alert('Error: ' + e) 
         }
     });
 }
@@ -96,3 +97,14 @@ function checkPassReq(newPass, confPass) {
 }
 
 
+function getGoals(request) {
+    $.ajax({
+        url: '/goal_data',
+        method: 'GET',
+        success: function(response) {
+            console.log(response);
+            let goals = JSON.stringify(response);
+            request(goals);
+        }
+    });
+}

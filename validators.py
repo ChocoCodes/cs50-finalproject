@@ -45,10 +45,6 @@ def isInt(input):
     except ValueError:
         return False
 
-def toDict(json_data):
-    """ Convert request from a list of dictionaries to a single dictionary """
-    return {entry['btnId']:entry['amount'] for entry in json_data}
-
 def toCategory(nTransacType, lookupDict):
     """ Convert numeric transaction type to its equivalent transaction category """
     equivCat = dict(zip(lookupDict['buttonID'], lookupDict['type']))
@@ -70,6 +66,11 @@ def mergeEntries(transactions, finances):
 def getCurrTime():
     """ Get current time """
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+def getPercent(current, total):
+    """ Calculate progress and format in percentage """
+    progress = (current / total) * 100
+    return f'{progress:.2f}%'
 
 def validatePasswordStructure(input):
     """ Check if the password follows the requirements """
