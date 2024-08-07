@@ -16,7 +16,6 @@ window.addEventListener('DOMContentLoaded', function() {
                 form.reset();
                 return;
             }
-            // TODO: Send as a single object not array of objects
             let clientData = {
                 btn_id: btnPressedId, 
                 amt: amtIn
