@@ -88,7 +88,6 @@ def getFormInput():
     rq_datetime = vd.getCurrTime()
     rq_btnId = int(request_userEntry['btn_id'])
     rq_amount = float(request_userEntry['amt'])
-    print(f"Button ID: {rq_btnId}, Amount: {rq_amount}, Time: {rq_datetime}")
     # Queries to update [Finances] table
     if rq_btnId == 1:
         updateSavings(rq_amount)
@@ -104,11 +103,8 @@ def getFormInput():
     # Queries to retrieve updated entries to [Transactions] and [Finances] table
     latest_transaction = getLatestEntry()
     updated_finances = getUserFinances()
-    print(f"ID: {latest_transaction[0]['id']}, Date: {latest_transaction[0]['transaction_date']}, Type: {latest_transaction[0]['transaction_type']}, Amount: {latest_transaction[0]['amt']}")
-    print(f"Savings: {updated_finances[0]['savings']}, Spendings: {updated_finances[0]['spendings']}, Allowance: {updated_finances[0]['allowance']}")
     # Merge data into a single JSON-like format and send to JS
     merged_data = vd.mergeEntries(latest_transaction, updated_finances)
-    print(f"transaction_id: {merged_data['transaction_id']}, amt: {merged_data['amt']}, type: {merged_data['type']}, date: {merged_data['date']}, u_savings: {merged_data['u_savings']}, u_spendings: {merged_data['u_spendings']}, u_allowance: {merged_data['u_allowance']}")
     return jsonify(merged_data), 200
 
 
@@ -117,9 +113,7 @@ def getFormInput():
 def deleteUserData():
     """ Delete all user data from all tables in the DB """
     delete_request = request.get_json()
-    print(f"Received: {delete_request}")
     username = delete_request['username']
-    print(f"Username: {username}")
     db.execute(
         "DELETE FROM finances WHERE user_id = ?", 
         (session['user_id'],)
@@ -132,6 +126,14 @@ def deleteUserData():
         "DELETE FROM users WHERE username = ?", 
         (username,)
     )
+    db.execute(
+        "DELETE FROM goals_info WHERE id IN (SELECT goals_info.id FROM goal_counts JOIN goals_info ON goal_counts.goal_ID = goals_info.id WHERE goal_counts.user_ID = ?", 
+        (session['user_id'],)
+    )
+    db.execute(
+        "DELETE FROM goal_counts WHERE user_ID = ?",
+        (session['user_id'],)
+    )
     return jsonify({'result': 'success'}), 200
 
 
@@ -140,11 +142,9 @@ def deleteUserData():
 def editUserPassword():
     """ Change user passwords """
     newPass = request.get_json()['new_password']
-    print(f'New: {newPass}')
     newSalt = vd.generatePasswordSalt()
     conv_newSalt = newSalt.hex()
     newHash = vd.generateHash(newPass, conv_newSalt)
-    print(f'New Salt: {newSalt}, Converted: {conv_newSalt}, New Hash: {newHash}')
     db.execute(
         "UPDATE users SET hash = ?, salt = ? WHERE id = ?", 
         newHash, conv_newSalt, session['user_id']
@@ -161,7 +161,6 @@ def createGoal():
     goalName = goalInfo['goal_name']
     goalDesc = goalInfo['goal_desc'] 
     goalTotal = float(goalInfo['goal_amt'])
-    print(f'Goal Info: {goalInfo}, Name: {goalName}, Desc: {goalDesc}, Total: {goalTotal}, Current: {curr_dep}')
     db.execute(
         "INSERT INTO goals_info(name, desc, total_amt, curr_dep) VALUES(?, ?, ?, ?)", 
         goalName, goalDesc, goalTotal, curr_dep
@@ -171,8 +170,21 @@ def createGoal():
         "INSERT INTO goal_counts(user_ID, goal_ID) VALUES(?, ?)",
         session['user_id'], latestGoalID
     )
-    return jsonify({'result': 'success'}), 200
+    uGoals, latestGoal = getUserGoals(), None
+    if uGoals:
+        for goal in uGoals:
+            if goal['id'] == latestGoalID:
+                latestGoal = goal
+                break
+        latestGoal['progress'] = vd.getPercent(latestGoal['curr_dep'], latestGoal['total_amt'])
+    return jsonify(latestGoal), 200
 
+@app.route('/edit_goal', methods=['POST'])
+def editUserGoal():
+    editedGoal = request.get_json()
+    # TODO: Check edited goal JSON if what field/s were edited
+    print(f"New Name: {editedGoal['name']}, New Desc: {editedGoal['desc']}, New Total: {editedGoal['total_amt']}")
+    return jsonify({'result': 'success'}), 200 # PLACEHOLDER
 
 @app.route('/goal_data')
 def sendGoals():

@@ -34,16 +34,22 @@ function sendData(form, data, url) {
         data: JSON.stringify(data),
         success: function(response) {
             if (url == '/submit') {
-                console.log('Response Converted: ' + JSON.stringify(response)); // DB
-                updateDashboard(form, response);
+                const transactionTable = document.getElementById('transactions-data');
+                const updatedFinances = [formatToPHP(response.u_savings), formatToPHP(response.u_spendings), formatToPHP(response.u_allowance)];
+                const updatedTransactions = [response.transaction_id, response.date, response.type, formatToPHP(response.amt)];
+                updateDisplayFinances(updatedFinances);
+                updateDisplayTable(transactionTable, form, updatedTransactions);
             }
-            if (url == '/create_new') console.log(data);
+            if (url == '/create_new') {
+                const goalsTable = document.getElementById('goals-table');
+                const updatedGoals = [response.name, response.desc, formatToPHP(response.total_amt), formatToPHP(response.curr_dep), response.progress];
+                updateDisplayTable(goalsTable, form, updatedGoals);
+            }
             if (url == '/change') alert('Password changed successfully!');
             if (url == '/delete') window.location.href = "/login";
         },
         error: function(err) {
-            e = JSON.stringify(err)
-            console.log('Error: ' + e); // DB
+            e = JSON.stringify(err);
             alert('Error: ' + e) 
         }
     });
@@ -58,26 +64,24 @@ function checkValue(amount) {
     return amount <= 0.0;
 }
 
-
-function updateDashboard(inputForm, response) {
-    const transactionTable = document.getElementById('transactions-data');
-    const transactionDisplay = [response.transaction_id, response.date, response.type, formatToPHP(response.amt)];
-    const FIELD_COUNT = transactionDisplay.length;
-    const financeDisplay = [formatToPHP(response.u_savings), formatToPHP(response.u_spendings), formatToPHP(response.u_allowance)];
+// Update User Finances
+function updateDisplayFinances(financeData) {
     const displayId = ['save', 'spend', 'allow'];
-    // Reset and Close Input Form
-    inputForm.reset();
-    document.getElementById('data-entry').style.display = "none";
-    // Update User Finances
     for (let i = 0; i < displayId.length; i++) {
-        document.getElementById(displayId[i]).innerText = financeDisplay[i];
+        document.getElementById(displayId[i]).innerText = financeData[i];
     }
-    // Update Transaction Table
-    let newEntry = transactionTable.insertRow(transactionTable.rows.length);
+}
+
+// Update Tables
+function updateDisplayTable(table, form, tableData) {
+    form.reset();
+    form.style.display = "none";
+    const FIELD_COUNT = tableData.length;
+    let newEntry = table.insertRow(table.rows.length);
     for (let i = 0; i < FIELD_COUNT; i++) {
         let field = newEntry.insertCell(i);
         field.classList.add((i == 0) ? "text-start" : "text-end");
-        field.innerText = transactionDisplay[i];
+        field.innerText = tableData[i];
     }
 }
 
@@ -101,9 +105,8 @@ function getGoals(request) {
         url: '/goal_data',
         method: 'GET',
         success: function(response) {
-            console.log(response);
-            let goals = JSON.stringify(response);
-            request(goals);
+            console.log(response); // DB 
+            request(response);
         }
     });
 }

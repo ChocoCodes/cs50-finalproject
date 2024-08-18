@@ -1,11 +1,36 @@
-function testDebugPrint(e) {
-    e.preventDefault();
-    console.log('test-components');
+function createSelectComponent(id, name) {
+    const select = document.createElement('select');
+    select.name = name;
+    select.id = id;
+    return select;
+}
+
+
+function populateDropdown(select, data) {
+    const placeholder = createPlaceholder('Goals');
+    select.appendChild(placeholder);
+    console.log(typeof(data));
+    data.forEach(data => {
+        const option = document.createElement('option');
+        option.value = data.id;
+        option.textContent = data.name;
+        select.appendChild(option);
+    });
+}
+
+
+function createPlaceholder(text) {
+    const placeholder = document.createElement('option');
+    placeholder.disabled = true;
+    placeholder.selected = true;
+    placeholder.value = "";
+    placeholder.textContent = text;
+    return placeholder;
 }
 
 
 function createBtnComponent(attributes, text, id, idx) {
-    let newBtn = document.createElement('button');
+    const newBtn = document.createElement('button');
     newBtn.innerHTML = text;
     for(let a in attributes) {
         if (a == "class") attributes.class = btnClass[idx];
@@ -14,15 +39,17 @@ function createBtnComponent(attributes, text, id, idx) {
     }
     return newBtn;
 }
+
+
 function createDiv(divClass) {
-    newDiv = document.createElement('div');
+    const newDiv = document.createElement('div');
     newDiv.setAttribute('class', divClass);
     return newDiv;
 }
 
 
 function createInputComponent(attributes, id, placeholder, type) {
-    let input = document.createElement('input');
+    const input = document.createElement('input');
     for(let a in attributes) {
         if (a == 'type') attributes.type = type;
         if (a == "id") attributes.id = id;
@@ -34,7 +61,7 @@ function createInputComponent(attributes, id, placeholder, type) {
 
 
 function createLabelComponent(attributes, text) {
-    let label = document.createElement('label');
+    const label = document.createElement('label');
     label.innerHTML = text;
     for (let a in attributes) {
         label.setAttribute(a, attributes[a]);
@@ -44,7 +71,7 @@ function createLabelComponent(attributes, text) {
 
 
 function createSmallComponent(attributes, text, id) {
-    let small = document.createElement('small');
+    const small = document.createElement('small');
     small.innerHTML = text;
     for (let a in attributes) {
         if (a == "id") attributes.id = id;

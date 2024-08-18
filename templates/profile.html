@@ -37,8 +37,8 @@
                 <tr>
                     <td class="text-start">{{ goal['name'] }}</td>
                     <td class="text-end">{{ goal['desc'] }}</td>
-                    <td class="text-end">{{ goal['total_amt'] }}</td>
-                    <td class="text-end">{{ goal['curr_dep'] }}</td>
+                    <td class="text-end">{{ goal['total_amt']  | php }}</td>
+                    <td class="text-end">{{ goal['curr_dep'] | php }}</td>
                     <td class="text-end">{{ goal['progress'] }}</td>
                 </tr>
                 {% endfor %}
