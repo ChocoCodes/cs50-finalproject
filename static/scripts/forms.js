@@ -1,4 +1,5 @@
-const routes = ['/create_new', '/edit_goal', '/delete', '/change'];
+const routes = ['/create_new', '/edit_goal', '/delete', '/change', '/remove'];
+let idxToDelete;
 
 function createNewGoal(e) {
     e.preventDefault();
@@ -75,6 +76,7 @@ function editGoal(e) {
                     editDesc.value = goal.desc;
                     editTotal.value = parseFloat(goal.total_amt);
 
+                    origValues.id = parseInt(goal.id)
                     origValues.name = goal.name;
                     origValues.desc = goal.desc;
                     origValues.total_amt = parseFloat(goal.total_amt);
@@ -86,6 +88,7 @@ function editGoal(e) {
             e.preventDefault();
             let editedValues = {};
             
+            editedValues.id = parseInt(origValues.id);
             if(editName.value !== origValues.name) editedValues.name = editName.value;
             if(editDesc.value !== origValues.desc) editedValues.desc = editDesc.value;
             if(parseFloat(editTotal.value) !== origValues.total_amt) {
@@ -96,6 +99,7 @@ function editGoal(e) {
                 }
                 editedValues.total_amt = parseFloat(editTotal.value);
             }
+            console.log(editedValues);
             sendData(profileForm, editedValues, routes[1]);
         });
         cancelBtn.addEventListener('click', function(e) {
@@ -117,6 +121,52 @@ function editGoal(e) {
 
 }
 
+function removeGoal(e) {
+    e.preventDefault();
+    if(hasAddedComponents) return;
+
+    const profileForm = document.getElementById('profile-form');
+    const fieldGrp = createDiv('form-group');
+
+    getGoals(function(goals) {
+        let label = createLabelComponent(labelAttr, 'Delete Goal');
+        let submitBtn = createBtnComponent(btnAttr, 'Submit', 'edit-submit', 0),
+        cancelBtn = createBtnComponent(btnAttr, 'Cancel', 'edit-cancel', 1);
+        let select = createSelectComponent('edit-option', 'goals');
+        populateDropdown(select, goals);
+
+        let deleteGoal = {};
+        select.addEventListener('change', function() {
+            let selected = parseInt(select.value);
+            goals.forEach(goal => {
+                if(selected === goal.id) {
+                    idxToDelete = getIndex(goal.name);
+                    deleteGoal.id = goal.id;
+                    deleteGoal.name = goal.name;
+                }
+            });
+        }); 
+
+        submitBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log(deleteGoal);
+            sendData(profileForm, deleteGoal, routes[4]);
+        });
+
+        cancelBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            clsProfileForm(profileForm);
+        });
+
+        fieldGrp.appendChild(label);
+        fieldGrp.appendChild(select);
+        profileForm.appendChild(fieldGrp);
+        profileForm.appendChild(submitBtn);
+        profileForm.appendChild(cancelBtn);
+
+        showForm(profileForm);
+    });
+}
 
 function showForm(form) {
     hasAddedComponents = true;

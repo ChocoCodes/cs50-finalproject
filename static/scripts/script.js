@@ -47,6 +47,7 @@ function sendData(form, data, url) {
             }
             if (url == '/change') alert('Password changed successfully!');
             if (url == '/delete') window.location.href = "/login";
+            if (url == '/remove') document.getElementById('goals-table').deleteRow(idxToDelete);
         },
         error: function(err) {
             e = JSON.stringify(err);
@@ -66,6 +67,7 @@ function checkValue(amount) {
 
 // Update User Finances
 function updateDisplayFinances(financeData) {
+    hasAddedComponents = false;
     const displayId = ['save', 'spend', 'allow'];
     for (let i = 0; i < displayId.length; i++) {
         document.getElementById(displayId[i]).innerText = financeData[i];
@@ -74,6 +76,7 @@ function updateDisplayFinances(financeData) {
 
 // Update Tables
 function updateDisplayTable(table, form, tableData) {
+    hasAddedComponents = false;
     form.reset();
     form.style.display = "none";
     const FIELD_COUNT = tableData.length;
@@ -110,3 +113,18 @@ function getGoals(request) {
         }
     });
 }
+
+
+function getIndex(name) {
+    const table = document.getElementById('goals-table');
+    rows = table.rows;
+    for(let i = 0; i < rows.length; i++) {
+        let cells = rows[i].cells;
+        for(let j = 0; j < cells.length; j++) {
+            if(cells[j].innerText === name) {
+                return i;
+            }
+        }
+    }
+    return -1;
+}   

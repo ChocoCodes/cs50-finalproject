@@ -1,8 +1,3 @@
-function testDebugPrint1(e) {
-    e.preventDefault();
-    console.log('test-attributes');
-}
-
 let inputAttr = {
     id: '',
     type: '',

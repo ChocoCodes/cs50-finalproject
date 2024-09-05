@@ -28,7 +28,7 @@ entryCategory = {
     'buttonID': [1, 2, 3],
     'type': ['Savings', 'Spendings','Allowance']
 }
-
+QUERY_DELIMITER = ', '
 # Adapted from CS50x Finance: https://cs50.harvard.edu/x/2024/psets/9/finance
 # Ensure that the data is always updated when the app is running
 @app.after_request
@@ -127,7 +127,7 @@ def deleteUserData():
         (username,)
     )
     db.execute(
-        "DELETE FROM goals_info WHERE id IN (SELECT goals_info.id FROM goal_counts JOIN goals_info ON goal_counts.goal_ID = goals_info.id WHERE goal_counts.user_ID = ?", 
+        "DELETE FROM goals_info WHERE id IN (SELECT goals_info.id FROM goal_counts JOIN goals_info ON goal_counts.goal_ID = goals_info.id WHERE goal_counts.user_ID = ?)", 
         (session['user_id'],)
     )
     db.execute(
@@ -179,12 +179,36 @@ def createGoal():
         latestGoal['progress'] = vd.getPercent(latestGoal['curr_dep'], latestGoal['total_amt'])
     return jsonify(latestGoal), 200
 
+
+"""
+TODO: Debug - ERROR LOG 
+File "/home/johnrlnddev/.local/lib/python3.10/site-packages/cs50/sql.py", line 28, in decorator
+    return f(*args, **kwargs)
+File "/home/johnrlnddev/.local/lib/python3.10/site-packages/cs50/sql.py", line 235, in execute
+raise RuntimeError(
+RuntimeError: more placeholders (?, ?) than values ('editedGoal1', 3)
+"""
+
 @app.route('/edit_goal', methods=['POST'])
 def editUserGoal():
-    editedGoal = request.get_json()
-    # TODO: Check edited goal JSON if what field/s were edited
-    print(f"New Name: {editedGoal['name']}, New Desc: {editedGoal['desc']}, New Total: {editedGoal['total_amt']}")
-    return jsonify({'result': 'success'}), 200 # PLACEHOLDER
+    pass
+
+@app.route('/remove', methods=['POST'])
+def removeGoal():
+    """ Remove user goals from DB. """
+    deleteInfo = request.get_json()
+    try:
+        db.execute(
+            "DELETE FROM goal_counts WHERE goal_ID = ? AND user_id = ?", 
+            deleteInfo['id'], session['user_id']
+        )
+        db.execute(
+            "DELETE FROM goals_info WHERE name = ? AND id = ?", 
+            deleteInfo['name'], deleteInfo['id']
+        )
+        return jsonify({'result': 'success'}), 200
+    except Exception as e:
+        return jsonify({'result' : 'error', 'message': str(e)}), 500
 
 @app.route('/goal_data')
 def sendGoals():
