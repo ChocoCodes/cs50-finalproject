@@ -28,7 +28,8 @@ entryCategory = {
     'buttonID': [1, 2, 3],
     'type': ['Savings', 'Spendings','Allowance']
 }
-QUERY_DELIMITER = ', '
+
+
 # Adapted from CS50x Finance: https://cs50.harvard.edu/x/2024/psets/9/finance
 # Ensure that the data is always updated when the app is running
 @app.after_request
@@ -209,6 +210,25 @@ def removeGoal():
         return jsonify({'result': 'success'}), 200
     except Exception as e:
         return jsonify({'result' : 'error', 'message': str(e)}), 500
+
+
+@app.route('/update')
+def updateGoalProgress():
+    """ TODO: DEBUG | Update curr_dep FROM goals_info table and recalculate progress. """
+    goalToUpdate = request.get_json()
+    try:
+        db.execute(
+            "UPDATE goals_info SET curr_dep = curr_dep + ? WHERE id = ? AND name = ?",
+            goalToUpdate['amt'], goalToUpdate['id'], goalToUpdate['name']
+        )
+        updatedGoal = db.execute(
+            "SELECT * FROM goals_info WHERE id = ? AND name = ?", 
+            goalToUpdate['id'], goalToUpdate['name']
+        )
+        updatedGoal['progress'] = vd.getPercent(updatedGoal['curr_dep'], updatedGoal['total_amt'])
+        return jsonify(updatedGoal), 200
+    except Exception as e:
+        return jsonify({'result':'error', 'message': str(e)}), 500
 
 @app.route('/goal_data')
 def sendGoals():

@@ -45,9 +45,14 @@ function sendData(form, data, url) {
                 const updatedGoals = [response.name, response.desc, formatToPHP(response.total_amt), formatToPHP(response.curr_dep), response.progress];
                 updateDisplayTable(goalsTable, form, updatedGoals);
             }
+            if (url == '/update') {
+                const table = document.getElementById('goals-table');
+                table.rows[index].cells[4].innerText = response.progress;
+                table.rows[index].cells[4].innerText = formatToPHP(response.curr_dep);
+            }  
             if (url == '/change') alert('Password changed successfully!');
             if (url == '/delete') window.location.href = "/login";
-            if (url == '/remove') document.getElementById('goals-table').deleteRow(idxToDelete);
+            if (url == '/remove') document.getElementById('goals-table').deleteRow(index);
         },
         error: function(err) {
             e = JSON.stringify(err);

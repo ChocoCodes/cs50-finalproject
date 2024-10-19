@@ -1,52 +1,107 @@
-const routes = ['/create_new', '/edit_goal', '/delete', '/change', '/remove'];
-let idxToDelete;
+const routes = ['/create_new', '/edit_goal', '/delete', '/change', '/remove', '/update'];
+let index;
 
-function createNewGoal(e) {
+
+function updateGoalProgress(e) {
+    e.preventDefault();
+    if(hasAddedComponents) return;
+    const profileForm = document.getElementById('profile-form');
+    const fieldGrp = createDiv('form-group');
+
+    getGoals(function(goals) {
+        let label = createLabelComponent(labelAttr, 'Update Goal Progress');
+        let deposit = createInputComponent(inputAttr, 'dep', 'Enter Amount', 'number');
+        let select = createSelectComponent('edit-option', 'goals');
+        let submitBtn = createBtnComponent(btnAttr, 'Submit', 'edit-submit', 0),
+        cancelBtn = createBtnComponent(btnAttr, 'Cancel', 'edit-cancel', 1);
+        populateDropdown(select, goals);
+
+        let updateGoalDeposit = {};
+        select.addEventListener('change', function() {
+            let selected = parseInt(select.value);
+            goals.forEach(goal => {
+                if(selected === goal.id) {
+                    index = getIndex(goal.name);
+                    updateGoalDeposit.id = goal.id;
+                    updateGoalDeposit.name = goal.name;
+                }
+            });
+        }); 
+
+        submitBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            let updateAmount = parseFloat(deposit.value);
+            if (checkValue(updateAmount)) {
+                alert('Amount cannot be negative/zero.');
+                deposit.value = '';
+                return;
+            }
+            updateGoalDeposit.amt = updateAmount;
+            sendData(profileForm, updateGoalDeposit, routes[5]);
+        });
+
+        cancelBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            clsProfileForm(profileForm);
+        });
+
+        fieldGrp.appendChild(label);
+        fieldGrp.appendChild(select);
+        fieldGrp.appendChild(deposit);
+        profileForm.appendChild(fieldGrp);
+        profileForm.appendChild(submitBtn);
+        profileForm.appendChild(cancelBtn);
+
+        showForm(profileForm);
+    });
+}
+
+
+function removeGoal(e) {
     e.preventDefault();
     if(hasAddedComponents) return;
 
     const profileForm = document.getElementById('profile-form');
     const fieldGrp = createDiv('form-group');
 
-    let formLabel = createLabelComponent(labelAttr, 'New Goal');
-    let gName = createInputComponent(inputAttr, 'g-name', 'Enter Goal Name', 'text'),
-    gDesc = createInputComponent(inputAttr, 'g-desc', 'Enter Goal Description', 'text'),
-    gAmt = createInputComponent(inputAttr, 'g-amt', 'Enter Goal Amount', 'number');
-    let submitBtn = createBtnComponent(btnAttr, 'Submit', 'gsubmit-btn', 0);
-    cancelBtn = createBtnComponent(btnAttr, 'Cancel', 'gcancel-btn', 1);
+    getGoals(function(goals) {
+        let label = createLabelComponent(labelAttr, 'Delete Goal');
+        let submitBtn = createBtnComponent(btnAttr, 'Submit', 'edit-submit', 0),
+        cancelBtn = createBtnComponent(btnAttr, 'Cancel', 'edit-cancel', 1);
+        let select = createSelectComponent('edit-option', 'goals');
+        populateDropdown(select, goals);
 
-    submitBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        const name = gName.value, 
-        desc = gDesc.value, 
-        amt = parseFloat(gAmt.value);
-        if(checkValue(amt)) {
-            alert('invalid amount.');
-            profileForm.reset();
-            return;
-        }
-        let newGoal = {
-            goal_name: name,
-            goal_desc: desc,
-            goal_amt: amt
-        };
-        sendData(profileForm, newGoal, routes[0]);
+        let deleteGoal = {};
+        select.addEventListener('change', function() {
+            let selected = parseInt(select.value);
+            goals.forEach(goal => {
+                if(selected === goal.id) {
+                    idxToDelete = getIndex(goal.name);
+                    deleteGoal.id = goal.id;
+                    deleteGoal.name = goal.name;
+                }
+            });
+        }); 
+
+        submitBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log(deleteGoal);
+            sendData(profileForm, deleteGoal, routes[4]);
+        });
+
+        cancelBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            clsProfileForm(profileForm);
+        });
+
+        fieldGrp.appendChild(label);
+        fieldGrp.appendChild(select);
+        profileForm.appendChild(fieldGrp);
+        profileForm.appendChild(submitBtn);
+        profileForm.appendChild(cancelBtn);
+
+        showForm(profileForm);
     });
-
-    cancelBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        clsProfileForm(profileForm);
-    });
-
-    fieldGrp.appendChild(formLabel);
-    fieldGrp.appendChild(gName);
-    fieldGrp.appendChild(gDesc);
-    fieldGrp.appendChild(gAmt);
-    profileForm.appendChild(fieldGrp);
-    profileForm.appendChild(document.createElement('br'));
-    profileForm.appendChild(submitBtn);
-    profileForm.appendChild(cancelBtn);
-    showForm(profileForm);
 }
 
 
@@ -121,52 +176,53 @@ function editGoal(e) {
 
 }
 
-function removeGoal(e) {
+function createNewGoal(e) {
     e.preventDefault();
     if(hasAddedComponents) return;
-
     const profileForm = document.getElementById('profile-form');
     const fieldGrp = createDiv('form-group');
 
-    getGoals(function(goals) {
-        let label = createLabelComponent(labelAttr, 'Delete Goal');
-        let submitBtn = createBtnComponent(btnAttr, 'Submit', 'edit-submit', 0),
-        cancelBtn = createBtnComponent(btnAttr, 'Cancel', 'edit-cancel', 1);
-        let select = createSelectComponent('edit-option', 'goals');
-        populateDropdown(select, goals);
+    let formLabel = createLabelComponent(labelAttr, 'New Goal');
+    let gName = createInputComponent(inputAttr, 'g-name', 'Enter Goal Name', 'text'),
+    gDesc = createInputComponent(inputAttr, 'g-desc', 'Enter Goal Description', 'text'),
+    gAmt = createInputComponent(inputAttr, 'g-amt', 'Enter Goal Amount', 'number');
+    let submitBtn = createBtnComponent(btnAttr, 'Submit', 'gsubmit-btn', 0);
+    cancelBtn = createBtnComponent(btnAttr, 'Cancel', 'gcancel-btn', 1);
 
-        let deleteGoal = {};
-        select.addEventListener('change', function() {
-            let selected = parseInt(select.value);
-            goals.forEach(goal => {
-                if(selected === goal.id) {
-                    idxToDelete = getIndex(goal.name);
-                    deleteGoal.id = goal.id;
-                    deleteGoal.name = goal.name;
-                }
-            });
-        }); 
-
-        submitBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log(deleteGoal);
-            sendData(profileForm, deleteGoal, routes[4]);
-        });
-
-        cancelBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            clsProfileForm(profileForm);
-        });
-
-        fieldGrp.appendChild(label);
-        fieldGrp.appendChild(select);
-        profileForm.appendChild(fieldGrp);
-        profileForm.appendChild(submitBtn);
-        profileForm.appendChild(cancelBtn);
-
-        showForm(profileForm);
+    submitBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const name = gName.value, 
+        desc = gDesc.value, 
+        amt = parseFloat(gAmt.value);
+        if(checkValue(amt)) {
+            alert('invalid amount.');
+            profileForm.reset();
+            return;
+        }
+        let newGoal = {
+            goal_name: name,
+            goal_desc: desc,
+            goal_amt: amt
+        };
+        sendData(profileForm, newGoal, routes[0]);
     });
+
+    cancelBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        clsProfileForm(profileForm);
+    });
+
+    fieldGrp.appendChild(formLabel);
+    fieldGrp.appendChild(gName);
+    fieldGrp.appendChild(gDesc);
+    fieldGrp.appendChild(gAmt);
+    profileForm.appendChild(fieldGrp);
+    profileForm.appendChild(document.createElement('br'));
+    profileForm.appendChild(submitBtn);
+    profileForm.appendChild(cancelBtn);
+    showForm(profileForm);
 }
+
 
 function showForm(form) {
     hasAddedComponents = true;
