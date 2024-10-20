@@ -180,19 +180,26 @@ def createGoal():
         latestGoal['progress'] = vd.getPercent(latestGoal['curr_dep'], latestGoal['total_amt'])
     return jsonify(latestGoal), 200
 
-
-"""
-TODO: Debug - ERROR LOG 
-File "/home/johnrlnddev/.local/lib/python3.10/site-packages/cs50/sql.py", line 28, in decorator
-    return f(*args, **kwargs)
-File "/home/johnrlnddev/.local/lib/python3.10/site-packages/cs50/sql.py", line 235, in execute
-raise RuntimeError(
-RuntimeError: more placeholders (?, ?) than values ('editedGoal1', 3)
-"""
-
 @app.route('/edit_goal', methods=['POST'])
 def editUserGoal():
-    pass
+    """ Edit user goals. """
+    editedGoal = request.get_json()
+    updatedGoal = None
+    try:
+        print(f"{editedGoal['id']}, {editedGoal['name']}, {editedGoal['desc']}, {editedGoal['total_amt']}")
+        db.execute(
+            "UPDATE goals_info SET name = ?, desc = ?, total_amt = ? WHERE id = ?",
+            editedGoal['name'], editedGoal['desc'], editedGoal['total_amt'], editedGoal['id']
+        )
+        updatedGoal = db.execute(
+            "SELECT * FROM goals_info WHERE id = ?",
+            editedGoal['id']
+        )
+        print(updatedGoal)
+    except Exception as e:
+        return jsonify({"result":"error", "msg": str(e)}), 500
+    print(f" Updated Goal: {updatedGoal}")
+    return jsonify(updatedGoal[0]), 200
 
 @app.route('/remove', methods=['POST'])
 def removeGoal():
@@ -212,10 +219,11 @@ def removeGoal():
         return jsonify({'result' : 'error', 'message': str(e)}), 500
 
 
-@app.route('/update')
+@app.route('/update', methods=['POST'])
 def updateGoalProgress():
     """ TODO: DEBUG | Update curr_dep FROM goals_info table and recalculate progress. """
     goalToUpdate = request.get_json()
+    print(f"{goalToUpdate['id']}, type {type(goalToUpdate['id'])}")
     try:
         db.execute(
             "UPDATE goals_info SET curr_dep = curr_dep + ? WHERE id = ? AND name = ?",
@@ -225,9 +233,12 @@ def updateGoalProgress():
             "SELECT * FROM goals_info WHERE id = ? AND name = ?", 
             goalToUpdate['id'], goalToUpdate['name']
         )
-        updatedGoal['progress'] = vd.getPercent(updatedGoal['curr_dep'], updatedGoal['total_amt'])
-        return jsonify(updatedGoal), 200
+        goal = updatedGoal[0]
+        print(f"type {type(updatedGoal)}, {updatedGoal}")
+        goal['progress'] = vd.getPercent(goal['curr_dep'], goal['total_amt'])
+        return jsonify(goal), 200
     except Exception as e:
+        print(str(e))
         return jsonify({'result':'error', 'message': str(e)}), 500
 
 @app.route('/goal_data')
