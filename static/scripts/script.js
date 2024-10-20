@@ -33,23 +33,27 @@ function sendData(form, data, url) {
         contentType: 'application/json',
         data: JSON.stringify(data),
         success: function(response) {
+            const transactionTable = document.getElementById('transactions-data');
+            const table = document.getElementById('goals-table');
             if (url == '/submit') {
-                const transactionTable = document.getElementById('transactions-data');
                 const updatedFinances = [formatToPHP(response.u_savings), formatToPHP(response.u_spendings), formatToPHP(response.u_allowance)];
                 const updatedTransactions = [response.transaction_id, response.date, response.type, formatToPHP(response.amt)];
                 updateDisplayFinances(updatedFinances);
                 updateDisplayTable(transactionTable, form, updatedTransactions);
             }
             if (url == '/create_new') {
-                const goalsTable = document.getElementById('goals-table');
                 const updatedGoals = [response.name, response.desc, formatToPHP(response.total_amt), formatToPHP(response.curr_dep), response.progress];
-                updateDisplayTable(goalsTable, form, updatedGoals);
+                updateDisplayTable(table, form, updatedGoals);
             }
             if (url == '/update') {
-                const table = document.getElementById('goals-table');
+                table.rows[index].cells[3].innerText = formatToPHP(response.curr_dep);
                 table.rows[index].cells[4].innerText = response.progress;
-                table.rows[index].cells[4].innerText = formatToPHP(response.curr_dep);
             }  
+            if (url == '/edit_goal') {
+                table.rows[index].cells[0].innerText = response.name;
+                table.rows[index].cells[1].innerText = response.desc;
+                table.rows[index].cells[2].innerText = formatToPHP(response.total_amt);
+            }
             if (url == '/change') alert('Password changed successfully!');
             if (url == '/delete') window.location.href = "/login";
             if (url == '/remove') document.getElementById('goals-table').deleteRow(index);

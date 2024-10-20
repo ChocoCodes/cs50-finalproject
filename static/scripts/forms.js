@@ -24,6 +24,7 @@ function updateGoalProgress(e) {
                     index = getIndex(goal.name);
                     updateGoalDeposit.id = goal.id;
                     updateGoalDeposit.name = goal.name;
+                    console.log(`Index: ${index}, ID: ${updateGoalDeposit.id}`);
                 }
             });
         }); 
@@ -38,6 +39,7 @@ function updateGoalProgress(e) {
             }
             updateGoalDeposit.amt = updateAmount;
             sendData(profileForm, updateGoalDeposit, routes[5]);
+            clsProfileForm(profileForm);
         });
 
         cancelBtn.addEventListener('click', function(e) {
@@ -76,7 +78,7 @@ function removeGoal(e) {
             let selected = parseInt(select.value);
             goals.forEach(goal => {
                 if(selected === goal.id) {
-                    idxToDelete = getIndex(goal.name);
+                    index = getIndex(goal.name);
                     deleteGoal.id = goal.id;
                     deleteGoal.name = goal.name;
                 }
@@ -85,8 +87,8 @@ function removeGoal(e) {
 
         submitBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            console.log(deleteGoal);
             sendData(profileForm, deleteGoal, routes[4]);
+            clsProfileForm(profileForm);
         });
 
         cancelBtn.addEventListener('click', function(e) {
@@ -121,42 +123,46 @@ function editGoal(e) {
         cancelBtn = createBtnComponent(btnAttr, 'Cancel', 'edit-cancel', 1);
         let select = createSelectComponent('edit-option', 'goals');
         populateDropdown(select, goals);
-
-        let origValues = {};
+        let goalId;
         select.addEventListener('change', function() {
             let selected = parseInt(select.value);
             goals.forEach(goal => {
                 if(selected === goal.id) {
+                    index = getIndex(goal.name);
+                    goalId = goal.id;
                     editName.value = goal.name;
                     editDesc.value = goal.desc;
                     editTotal.value = parseFloat(goal.total_amt);
-
-                    origValues.id = parseInt(goal.id)
-                    origValues.name = goal.name;
-                    origValues.desc = goal.desc;
-                    origValues.total_amt = parseFloat(goal.total_amt);
                 }
             });
         }); 
 
         submitBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            let editedValues = {};
             
-            editedValues.id = parseInt(origValues.id);
-            if(editName.value !== origValues.name) editedValues.name = editName.value;
-            if(editDesc.value !== origValues.desc) editedValues.desc = editDesc.value;
-            if(parseFloat(editTotal.value) !== origValues.total_amt) {
-                if(editTotal.value === "" || checkValue(parseFloat(editTotal.value))) {
-                    alert('invalid amount.');
-                    editTotal.value = '';
-                    return;
-                }
-                editedValues.total_amt = parseFloat(editTotal.value);
+            if (!goalId) {
+                alert("Select a goal to edit.");
+                return;
             }
-            console.log(editedValues);
+            
+            let editedValues = {
+                id: parseInt(goalId),
+                name: editName.value,
+                desc: editDesc.value,
+            };
+
+            if(editTotal.value === "" || checkValue(parseFloat(editTotal.value))) {
+                alert('invalid amount.');
+                editTotal.value = '';
+                return;
+            }
+            editedValues.total_amt = parseFloat(editTotal.value);
+
+            console.log(`${editedValues.name}, ${editedValues.desc}, ${editedValues.total_amt}`);
             sendData(profileForm, editedValues, routes[1]);
+            clsProfileForm(profileForm);
         });
+
         cancelBtn.addEventListener('click', function(e) {
             e.preventDefault();
             clsProfileForm(profileForm);
@@ -178,7 +184,7 @@ function editGoal(e) {
 
 function createNewGoal(e) {
     e.preventDefault();
-    if(hasAddedComponents) return;
+    if (hasAddedComponents) return;
     const profileForm = document.getElementById('profile-form');
     const fieldGrp = createDiv('form-group');
 
@@ -205,6 +211,7 @@ function createNewGoal(e) {
             goal_amt: amt
         };
         sendData(profileForm, newGoal, routes[0]);
+        clsProfileForm(profileForm);
     });
 
     cancelBtn.addEventListener('click', function(e) {
@@ -270,6 +277,7 @@ function showDeleteForm(e) {
             username: uName
         };
         sendData(profileForm, userData, routes[2]);
+        clsProfileForm(profileForm);
     });
 
     noBtn.addEventListener('click', function(e) {
@@ -322,6 +330,7 @@ function createPasswordForm(e) {
             new_password: newPass
         };
         sendData(profileForm, newPassData, routes[3]);
+        clsProfileForm(profileForm);
     });
     cancelBtn.addEventListener('click', function(e) {
         e.preventDefault();
