@@ -8,6 +8,9 @@
 <h1>Entity Relationship Diagram</h1>
 <img src="https://i.imgur.com/QqahbwK.png" alt="FinnaOrganize Database">
 <p>
+    An entity-relationship diagram was established to fully visualize and synthesize the database of the system. An ERD is important in a finance tracking system because it helps to identify the key entities involved, such as users, transactions, budgets, and goals, along with their relationships and attributes. By mapping out these elements, an ERD facilitates better understanding and organization of the data structure, ensuring that all necessary information is captured accurately. It also aids in optimizing database design, improving data integrity, and streamlining the development process, ultimately leading to a more efficient and user-friendly application.
+  <br>
+  <br>
   The finances table stores each user's financial information. It includes their savings, spendings, and allowance. Each record in this table is linked to a specific user using the userID foreign key. This ensures that financial data is associated with the correct user.
   <br>
   <br>
