@@ -92,7 +92,18 @@ Finally, the goal_counts table tracks the progress of users towards their goals.
 <strong>Goal Management - Add, Edit, Delete, or Update goals through dropdown:</strong> The goal management feature provides users with an intuitive interface to add, edit, delete, or update their financial goals using a convenient dropdown menu. This functionality enables users to set clear, achievable objectives for their savings and spending, which can motivate them to reach their financial targets more effectively. By allowing users to manage their goals dynamically, the system supports a personalized approach to financial planning, making it easier for individuals to track their progress and make adjustments as necessary.
 </p>
 
-
+<h1 id="limits">System Limitations</h1>
+<ul>
+  <li>
+    <strong>Unresponsive Design for Custom Components:</strong> The current system suffers from an unresponsive design, particularly in its custom components, which can lead to a suboptimal user experience on various devices. When users access the dashboard on mobile or tablet devices, the layout may not adjust appropriately, resulting in components that are difficult to navigate or read. This limitation restricts users' ability to interact with the dashboard seamlessly across different screen sizes, potentially diminishing user engagement and satisfaction.
+  </li>
+  <li>
+    <strong>Tracking Provides Only Summary Statistics:</strong> The tracking feature of the application is limited to providing summary statistics for savings, spendings, and allowances without offering detailed insights or breakdowns. While summary statistics can give users a high-level view of their financial situation, they lack the granularity needed for in-depth analysis of spending habits or savings trends. This limitation may prevent users from fully understanding their financial behaviors, making it challenging to identify specific areas for improvement or informed decision-making.
+  </li>
+  <li>
+    <strong>Information Displayed in Tabular Form: </strong> The dashboard displays information primarily in tabular format, which can lead to a less engaging and intuitive user experience. While tables can effectively present data, they often lack the visual appeal and interactivity that users expect from modern applications. The absence of custom interfaces, such as graphs, charts, or visual indicators, means that users may find it harder to interpret and interact with their financial data, potentially leading to disengagement or difficulty in recognizing key insights.
+  </li>
+</ul>
 
 <h1 id="contact">Contact</h1>
 <h3>If you encounter any bugs or have suggestions for improvements, please feel free to contact me via:</h3>
