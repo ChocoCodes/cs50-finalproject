@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Serif:ital,opsz,wght@0,8..144,100..900;1,8..144,100..900&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
 
 * {
     margin: 0;
@@ -21,19 +21,19 @@ a.remove-link {
     background: white;
 }
 
-a.mango {
+.mango {
     /*F7BF8E*/
-    color: #000000;
+    color: #F7BF8E;
 }
 
 a.fnt-nav {
-    font-size: 40px;
+    font-size: 20px;
     font-family: 'Roboto Serif', sans-serif;
     font-weight: 600;
 }
 
-a.fnt {
-    font-size: 40px;
+.fnt {
+    font-size: 30px;
     font-family: 'Roboto Serif', sans-serif;
     font-weight: 700;
     text-decoration: none;
@@ -54,4 +54,72 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
+}
+
+input.form-control {
+    left: calc(25% + 15px);
+    border-bottom: none;
+    margin-bottom: 20px;
+    width: calc(100% - 15px);
+}
+
+.card-login {
+    position: relative;
+    left: calc(50% - 250px);
+    width: 500px;
+    height: 350px; 
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.center {
+    padding: 20px;
+}
+
+.header {
+    margin-top: 50px;
+}
+
+input.clean {
+    margin-bottom: 30px;
+}
+
+input.clean,
+input.clean:focus {
+    border: none;
+    border-radius: 0;
+    outline: none;
+    border-bottom: 3px solid #F7BF8E;
+    background: none;
+    box-shadow: none;
+    color: #F7BF8E;
+}
+
+input.clean::placeholder {
+    font-family: 'Lato', sans-serif;
+    color:#F7BF8E;
+    opacity: 1;
+    transition: font-size 0.3 ease;
+}
+
+input.clean:focus::placeholder {
+    font-size: 1.1em;
+}
+
+.button {
+    box-shadow: none;
+    outline: none;
+    border: none;
+    background-color: #262277;    
+    padding: 15px 25px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #F7BF8E;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    text-align: center;
 }
