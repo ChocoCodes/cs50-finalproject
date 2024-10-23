@@ -1,6 +1,14 @@
 let btnPressedId;
 let hasAddedComponents = false;
 
+const changeVisibility = (checkbox) => {
+    const passField =  document.getElementById("pass");
+    checkbox.checked ? passField.type = "text" : passField.type = "password";
+}
+
+const formatToPHP = (amount) => `₱${amount.toFixed(2)}`;
+
+const checkValue = (amount) => amount <= 0.0;
 
 // Extract button ID and the amount, then send to back-end as JSON
 window.addEventListener('DOMContentLoaded', function() {
@@ -63,15 +71,6 @@ function sendData(form, data, url) {
             alert('Error: ' + e) 
         }
     });
-}
-
-
-function formatToPHP(amount) {
-    return '₱' + amount.toFixed(2);
-}
-
-function checkValue(amount) {
-    return amount <= 0.0;
 }
 
 // Update User Finances

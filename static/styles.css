@@ -103,7 +103,7 @@ input.clean::placeholder {
     font-family: 'Lato', sans-serif;
     color:#F7BF8E;
     opacity: 1;
-    transition: font-size 0.3 ease;
+    transition: font-size 1 ease;
 }
 
 input.clean:focus::placeholder {
