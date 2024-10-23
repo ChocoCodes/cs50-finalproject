@@ -108,13 +108,13 @@ Finally, the goal_counts table tracks the progress of users towards their goals.
 <h1 id="how-to">How to Use</h1>
 <ol>
   <li>
-    <strong>Create an Account:</strong>If you are a new user, visit the registration page to create an account. Once your account is successfully created, you will be redirected to the main dashboard page, where you can start managing your finances.
+    <strong>Create an Account:</strong> If you are a new user, visit the registration page to create an account. Once your account is successfully created, you will be redirected to the main dashboard page, where you can start managing your finances.
   </li>
   <li>
-    <strong>Start Tracking Allowances:</strong>Initially, your dashboard will be empty. To begin tracking your finances, add an allowance to your account. All financial information is dynamically refreshed, so there's no need to manually refresh the page. Additionally, all transactions will be logged in the transactions table for your reference.
+    <strong>Start Tracking Allowances:</strong> Initially, your dashboard will be empty. To begin tracking your finances, add an allowance to your account. All financial information is dynamically refreshed, so there's no need to manually refresh the page. Additionally, all transactions will be logged in the transactions table for your reference.
   </li>
   <li>
-    <strong>Managing Your Account Information:</strong>Navigate to the profile page to manage your account settings. Here, you can edit your password by entering your current password followed by your new password. If you wish to delete your account, simply select the delete account option, and confirm your choice; please note that this action is irreversible and will result in the loss of all your data associated with the account.
+    <strong>Managing Your Account Information:</strong> Navigate to the profile page to manage your account settings. Here, you can edit your password by entering your current password followed by your new password. If you wish to delete your account, simply select the delete account option, and confirm your choice; please note that this action is irreversible and will result in the loss of all your data associated with the account.
   </li>
   <li>
     <strong>Managing Your Financial Goals:</strong> Access the goal management feature to add, edit, delete, or update your financial goals using the dropdown menu. This intuitive interface allows you to set and modify clear objectives for your savings and spending. By dynamically managing your goals, you can easily track your progress and make necessary adjustments to stay on target.
