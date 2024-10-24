@@ -86,6 +86,7 @@ input.form-control {
 
 input.clean {
     margin-bottom: 30px;
+    margin-left: 5px;
 }
 
 input.clean,
@@ -122,4 +123,17 @@ input.clean:focus::placeholder {
     margin-bottom: 20px;
     border-radius: 10px;
     text-align: center;
+}
+
+/* REVISE */
+.pass-container { 
+    background:red;
+}
+
+.password-toggle {
+    position: relative;
+    right: 100px;
+    bottom: 12px;
+    cursor: pointer;
+    margin-top: 100px;
 }
