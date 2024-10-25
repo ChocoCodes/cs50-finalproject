@@ -186,7 +186,6 @@ def editUserGoal():
     editedGoal = request.get_json()
     updatedGoal = None
     try:
-        print(f"{editedGoal['id']}, {editedGoal['name']}, {editedGoal['desc']}, {editedGoal['total_amt']}")
         db.execute(
             "UPDATE goals_info SET name = ?, desc = ?, total_amt = ? WHERE id = ?",
             editedGoal['name'], editedGoal['desc'], editedGoal['total_amt'], editedGoal['id']
@@ -195,10 +194,8 @@ def editUserGoal():
             "SELECT * FROM goals_info WHERE id = ?",
             editedGoal['id']
         )
-        print(updatedGoal)
     except Exception as e:
         return jsonify({"result":"error", "msg": str(e)}), 500
-    print(f" Updated Goal: {updatedGoal}")
     return jsonify(updatedGoal[0]), 200
 
 @app.route('/remove', methods=['POST'])
@@ -223,7 +220,6 @@ def removeGoal():
 def updateGoalProgress():
     """ TODO: DEBUG | Update curr_dep FROM goals_info table and recalculate progress. """
     goalToUpdate = request.get_json()
-    print(f"{goalToUpdate['id']}, type {type(goalToUpdate['id'])}")
     try:
         db.execute(
             "UPDATE goals_info SET curr_dep = curr_dep + ? WHERE id = ? AND name = ?",
@@ -234,11 +230,9 @@ def updateGoalProgress():
             goalToUpdate['id'], goalToUpdate['name']
         )
         goal = updatedGoal[0]
-        print(f"type {type(updatedGoal)}, {updatedGoal}")
         goal['progress'] = vd.getPercent(goal['curr_dep'], goal['total_amt'])
         return jsonify(goal), 200
     except Exception as e:
-        print(str(e))
         return jsonify({'result':'error', 'message': str(e)}), 500
 
 @app.route('/goal_data')
