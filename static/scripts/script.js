@@ -128,7 +128,6 @@ function getGoals(request) {
         url: '/goal_data',
         method: 'GET',
         success: function(response) {
-            console.log(response); // DB 
             request(response);
         }
     });

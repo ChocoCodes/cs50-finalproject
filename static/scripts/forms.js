@@ -24,7 +24,6 @@ function updateGoalProgress(e) {
                     index = getIndex(goal.name);
                     updateGoalDeposit.id = goal.id;
                     updateGoalDeposit.name = goal.name;
-                    console.log(`Index: ${index}, ID: ${updateGoalDeposit.id}`);
                 }
             });
         }); 
@@ -157,8 +156,7 @@ function editGoal(e) {
                 return;
             }
             editedValues.total_amt = parseFloat(editTotal.value);
-
-            console.log(`${editedValues.name}, ${editedValues.desc}, ${editedValues.total_amt}`);
+            
             sendData(profileForm, editedValues, routes[1]);
             clsProfileForm(profileForm);
         });
