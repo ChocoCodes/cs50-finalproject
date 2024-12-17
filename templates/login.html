@@ -5,19 +5,32 @@
 {% endblock %}
 
 {% block main %}
-    <form action="{{ url_for('login') }}" method="post" class="card-login forms-login">
-        <h1 class="fnt mango header">LOG IN</h1>
-        <div class="form-group center">    
-            <input class="form-control clean" autocomplete="off" autofocus name="username" placeholder="Username"> 
-            <div class="pass-container">
-                <input id="pass" class="form-control clean" autocomplete="off" autofocus name="password" placeholder="Password" type="password">
-                <svg id="password-toggle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" color="#F7BF8E" fill="none" onclick="changeVisibility()">
-                    <path d="M2 8C2 8 6.47715 3 12 3C17.5228 3 22 8 22 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                    <path d="M21.544 13.045C21.848 13.4713 22 13.6845 22 14C22 14.3155 21.848 14.5287 21.544 14.955C20.1779 16.8706 16.6892 21 12 21C7.31078 21 3.8221 16.8706 2.45604 14.955C2.15201 14.5287 2 14.3155 2 14C2 13.6845 2.15201 13.4713 2.45604 13.045C3.8221 11.1294 7.31078 7 12 7C16.6892 7 20.1779 11.1294 21.544 13.045Z" stroke="currentColor" stroke-width="1.5" />
-                    <path d="M15 14C15 12.3431 13.6569 11 12 11C10.3431 11 9 12.3431 9 14C9 15.6569 10.3431 17 12 17C13.6569 17 15 15.6569 15 14Z" stroke="currentColor" stroke-width="1.5" />
-                </svg>
+    <form action="{{ url_for('login') }}" method="post" class="card-glass forms-login">
+        <h1 class="mango header">LOG IN</h1>
+        <div class="form-group align-items-center justify-content-center">    
+            <div class="user d-flex flex-row align-items-center justify-content-center">
+                <input 
+                class="form-control clean" 
+                autocomplete="off" 
+                placeholder="Username"> 
             </div>
-            <button type="submit" class="button">Submit</button>
+            <div class="d-flex flex-row justify-content-center align-items-center pass-group">
+                <input 
+                    id="pass" 
+                    class="form-control clean" 
+                    autocomplete="off" 
+                    placeholder="Password" 
+                    type="password">
+                <span class="pass-group-text" id="password-addon">
+                    <svg class="mango" id="password-toggle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="25" height="25" fill="none" onclick="changeVisibility()">
+                        <path d="M2 8C2 8 6.47715 3 12 3C17.5228 3 22 8 22 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                        <path d="M21.544 13.045C21.848 13.4713 22 13.6845 22 14C22 14.3155 21.848 14.5287 21.544 14.955C20.1779 16.8706 16.6892 21 12 21C7.31078 21 3.8221 16.8706 2.45604 14.955C2.15201 14.5287 2 14.3155 2 14C2 13.6845 2.15201 13.4713 2.45604 13.045C3.8221 11.1294 7.31078 7 12 7C16.6892 7 20.1779 11.1294 21.544 13.045Z" stroke="currentColor" stroke-width="1.5" />
+                        <path d="M15 14C15 12.3431 13.6569 11 12 11C10.3431 11 9 12.3431 9 14C9 15.6569 10.3431 17 12 17C13.6569 17 15 15.6569 15 14Z" stroke="currentColor" stroke-width="1.5" />
+                    </svg>
+                </span>
+            </div>
+
+            <button type="submit" class="button pt-4">Submit</button>
         </div>
     </form>
 {% endblock %}

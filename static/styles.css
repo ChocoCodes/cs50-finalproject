@@ -1,6 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Serif:ital,opsz,wght@0,8..144,100..900;1,8..144,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
 
+:root {
+    --mango: #F7BF8E;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -21,21 +25,10 @@ a.remove-link {
     background: white;
 }
 
-.mango {
-    /*F7BF8E*/
-    color: #F7BF8E;
-}
-
 a.fnt-nav {
-    font-size: 20px;
+    font-size: 2rem;
     font-family: 'Roboto Serif', sans-serif;
     font-weight: 600;
-}
-
-.fnt {
-    font-size: 30px;
-    font-family: 'Roboto Serif', sans-serif;
-    font-weight: 700;
     text-decoration: none;
 }
 
@@ -56,18 +49,74 @@ input::-webkit-inner-spin-button {
     margin: 0;
 }
 
-input.form-control {
-    left: calc(25% + 15px);
-    border-bottom: none;
-    margin-bottom: 20px;
-    width: calc(100% - 15px);
+.center {
+    padding: 20px;
 }
 
-.card-login {
-    position: relative;
-    left: calc(50% - 250px);
-    width: 500px;
-    height: 350px; 
+.header {
+    font: normal bold 2.8125rem/normal 'Roboto Serif', sans-serif;
+    margin-top: 4rem;
+    margin-bottom: 3.5rem;
+}
+
+input.clean {
+    margin-bottom: 30px;
+    font: normal 400 1.25rem/normal 'Lato', sans-serif;
+}
+
+.mango {
+    color: var(--mango);
+}
+
+input.clean,
+input.clean:focus {
+    width: 22.5rem;
+    border: none;
+    border-radius: 0;
+    outline: none;
+    border-bottom: 3px solid var(--mango);
+    background: none;
+    box-shadow: none;
+    color: var(--mango);
+}
+
+.clean:focus {
+    font: normal 400 1.5rem/normal 'Lato', sans-serif;
+}
+
+input.clean::placeholder {
+    font: normal 400 1.25rem/normal 'Lato', sans-serif;
+    color: var(--mango);
+    opacity: 1;
+    transition: font-size 0.5 ease;
+    margin-bottom: 20px;
+}
+
+input.clean:focus::placeholder {
+    font-size: 1.5rem;
+}
+
+.pass-group {
+    margin: 1.5rem 0 2.5rem 0;
+    gap: 10px;
+}
+
+.user {
+    margin-right: 30px;
+}
+
+.pass-group-text {
+    background: none;
+    padding: 0;
+    border: none;
+    border-radius: 0;    
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.card-glass {
+    width: 30rem;
+    height: 35rem; 
     background: rgba(255, 255, 255, 0.3);
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
     backdrop-filter: blur(5px);
@@ -76,64 +125,18 @@ input.form-control {
     border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
-.center {
-    padding: 20px;
-}
-
-.header {
-    margin-top: 50px;
-}
-
-input.clean {
-    margin-bottom: 30px;
-    margin-left: 5px;
-}
-
-input.clean,
-input.clean:focus {
-    border: none;
-    border-radius: 0;
-    outline: none;
-    border-bottom: 3px solid #F7BF8E;
-    background: none;
-    box-shadow: none;
-    color: #F7BF8E;
-}
-
-input.clean::placeholder {
-    font-family: 'Lato', sans-serif;
-    color:#F7BF8E;
-    opacity: 1;
-    transition: font-size 1 ease;
-}
-
-input.clean:focus::placeholder {
-    font-size: 1.1em;
-}
-
 .button {
+    width: 10rem;
+    height: 5rem;
     box-shadow: none;
     outline: none;
     border: none;
     background-color: #262277;    
     padding: 15px 25px;
-    font-size: 20px;
+    font-size: 1.5rem;
     font-weight: 700;
-    color: #F7BF8E;
+    color: var(--mango);
     margin-bottom: 20px;
-    border-radius: 10px;
+    border-radius: 20px;
     text-align: center;
-}
-
-/* REVISE */
-.pass-container { 
-    background:red;
-}
-
-.password-toggle {
-    position: relative;
-    right: 100px;
-    bottom: 12px;
-    cursor: pointer;
-    margin-top: 100px;
 }
