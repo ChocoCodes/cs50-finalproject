@@ -56,7 +56,6 @@ input::-webkit-inner-spin-button {
 .header {
     font: normal bold 2.8125rem/normal 'Roboto Serif', sans-serif;
     margin-top: 4rem;
-    margin-bottom: 3.5rem;
 }
 
 input.clean {
@@ -88,7 +87,7 @@ input.clean::placeholder {
     font: normal 400 1.25rem/normal 'Lato', sans-serif;
     color: var(--mango);
     opacity: 1;
-    transition: font-size 0.5 ease;
+    transition: font-size 0.3 ease;
     margin-bottom: 20px;
 }
 
@@ -127,16 +126,21 @@ input.clean:focus::placeholder {
 
 .button {
     width: 10rem;
-    height: 5rem;
-    box-shadow: none;
+    height: 3.5rem;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
     outline: none;
     border: none;
     background-color: #262277;    
-    padding: 15px 25px;
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--mango);
     margin-bottom: 20px;
-    border-radius: 20px;
+    border-radius: 15px;
     text-align: center;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.button:hover {
+    background-color: var(--mango);
+    color: #262277;
 }

@@ -5,8 +5,11 @@
 {% endblock %}
 
 {% block main %}
-    <form action="{{ url_for('login') }}" method="post" class="card-glass forms-login">
-        <h1 class="mango header">LOG IN</h1>
+    <form action="{{ url_for('login') }}" method="post" class="card-glass">
+        <div class="mb-4 d-flex flex-column align-items-center justify-content-center">
+            <h1 class="mango header">LOG IN</h1>
+            <p class="mango text-center align-items-center justify-content-center">Welcome to FinnaOrganize!</p>
+        </div>
         <div class="form-group align-items-center justify-content-center">    
             <div class="user d-flex flex-row align-items-center justify-content-center">
                 <input 
@@ -30,7 +33,7 @@
                 </span>
             </div>
 
-            <button type="submit" class="button pt-4">Submit</button>
+            <button type="submit" class="button text-center align-items-center justify-content-center mt-3">Submit</button>
         </div>
     </form>
 {% endblock %}
